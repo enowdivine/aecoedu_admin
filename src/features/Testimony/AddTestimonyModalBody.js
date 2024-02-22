@@ -9,7 +9,7 @@ import ImageUploader from "../../components/Input/ImageUploader";
 
 const INITIAL_TESTIMONY_OBJ = {
   name: "",
-  // company: "",
+  company: "",
   message: "",
 };
 
@@ -29,7 +29,7 @@ function AddTestimonyModalBody({ closeModal }) {
         id: 1,
         name: TestimonyObj.name,
         message: TestimonyObj.message,
-        // company: TestimonyObj.company,
+        company: TestimonyObj.company,
       };
       dispatch(addNewTestimony({ newTestimonyObj }));
       dispatch(
@@ -58,14 +58,14 @@ function AddTestimonyModalBody({ closeModal }) {
         labelTitle="Name"
         updateFormValue={updateFormValue}
       />
-      {/* <InputText
+      <InputText
         type="text"
         defaultValue={TestimonyObj.company}
         updateType="company"
         containerStyle="mt-4"
         labelTitle="Company"
         updateFormValue={updateFormValue}
-      /> */}
+      />
       <ImageUploader
         labelTitle="Upload an image"
         containerStyle="my-4"

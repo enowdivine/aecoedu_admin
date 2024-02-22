@@ -75,7 +75,7 @@ function Testimony() {
               <tr>
                 <th>Name</th>
                 <th>Message</th>
-                {/* <th>Company</th> */}
+                <th>Company</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -106,11 +106,11 @@ function Testimony() {
                     or a functional component to render them correctly.
                   </p>
                 </td>
-                {/* <td>
+                <td>
                   <div>
                     <div className="font-bold">Quatana Experimental 1 & 2</div>
                   </div>
-                </td> */}
+                </td>
                 <td>
                   <button
                     className="btn btn-square btn-ghost"
