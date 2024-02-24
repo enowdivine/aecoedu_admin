@@ -11,7 +11,7 @@ function InternalPage() {
     dispatch(setPageTitle({ title: "Partner" }));
   }, []);
 
-  return <Partner /> ;
+  return <Partner />;
 }
 
 export default InternalPage;
