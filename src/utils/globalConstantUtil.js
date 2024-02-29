@@ -1,4 +1,3 @@
-
 module.exports = Object.freeze({
   MODAL_BODY_TYPES: {
     USER_DETAIL: "USER_DETAIL",
@@ -32,5 +31,8 @@ module.exports = Object.freeze({
     HOSTCENTER_DELETE: "HOSTCENTER_DELETE",
     PROGRAM_DELETE: "PROGRAM_DELETE",
     COURSE_DELETE: "COURSE_DELETE",
+  },
+  SHOW_MODAL_TYPES: {
+    SHOW_NEW_EVENT: "SHOW_NEW_EVENT",
   },
 });

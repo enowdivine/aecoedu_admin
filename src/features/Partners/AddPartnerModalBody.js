@@ -4,15 +4,15 @@ import InputText from "../../components/Input/InputText";
 import TextAreaInput from "../../components/Input/TextAreaInput";
 import ErrorText from "../../components/Typography/ErrorText";
 import { showNotification } from "../common/headerSlice";
-import { addNewPartner } from "./partnerSlice";
 import ImageUploader from "../../components/Input/ImageUploader";
+import { createPartner } from "../../app/reducers/app";
 
 const INITIAL_PARTNER_OBJ = {
-  name: "",
-  logo: "",
   image: "",
-  decription: "",
-  websitelink: "",
+  logo: "",
+  title: "",
+  desc: "",
+  link: "",
 };
 
 function AddPartnerModalBody({ closeModal }) {
@@ -21,28 +21,54 @@ function AddPartnerModalBody({ closeModal }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [PartnerObj, setPartnerObj] = useState(INITIAL_PARTNER_OBJ);
 
-  const saveNewPartner = () => {
-    if (PartnerObj.name.trim() === "") return setErrorMessage("name is required!");
-    else if (PartnerObj.logo.trim() === "")
-      return setErrorMessage("logo is required!");
-    else if (PartnerObj.image.trim() === "")
-      return setErrorMessage("image is required!");
-    else if (PartnerObj.decription.trim() === "")
-      return setErrorMessage("description is required!");
-    else if (PartnerObj.websitelink.trim() === "")
-      return setErrorMessage("websitelink is required!");
-    else {
-      let newPartnerObj = {
-        id: 7,
-        name: PartnerObj.name,
-        logo: PartnerObj.logo,
-        image: PartnerObj.image,
-        decription: PartnerObj.decription,
-        websitelink: PartnerObj.websitelink,
-      };
-      dispatch(addNewPartner({ newPartnerObj }));
-      dispatch(showNotification({ message: "Partner succesfully Added!", status: 1 }));
-      closeModal();
+  const handleCreatePartner = async () => {
+    try {
+      if (
+        // eventObj.category &&
+        PartnerObj.image &&
+        PartnerObj.logo &&
+        PartnerObj.title &&
+        PartnerObj.link &&
+        PartnerObj.desc
+      ) {
+        setLoading(true);
+        const newPartnerObj = {
+          image: PartnerObj.image,
+          logo: PartnerObj.logo,
+          title: PartnerObj.title,
+          desc: PartnerObj.desc,
+          link: PartnerObj.link,
+        };
+        await dispatch(createPartner(newPartnerObj)).then((res) => {
+          if (res.meta.requestStatus === "rejected") {
+            dispatch(
+              showNotification({
+                message: res.payload,
+                status: 1,
+              })
+            );
+            setLoading(false);
+            return;
+          } else {
+            dispatch(
+              showNotification({
+                message: res.payload.message,
+                status: 1,
+              })
+            );
+            setLoading(false);
+            return;
+          }
+        });
+      } else {
+        dispatch(
+          showNotification({ message: "All field are required!", status: 1 })
+        );
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      return;
     }
   };
 
@@ -61,30 +87,30 @@ function AddPartnerModalBody({ closeModal }) {
       <InputText
         type="text"
         defaultValue={PartnerObj.name}
-        updateType="name"
+        updateType="tilte"
         containerStyle="mt-4"
-        labelTitle="Name"
+        labelTitle="Title"
         updateFormValue={updateFormValue}
       />
       <InputText
         type="url"
-        defaultValue={PartnerObj.websitelink}
-        updateType="websitelink"
+        defaultValue={PartnerObj.link}
+        updateType="link"
         containerStyle="mt-4"
-        labelTitle="Websitelink"
+        labelTitle="link"
         updateFormValue={updateFormValue}
       />
       <ImageUploader
         labelTitle="Upload logo"
         containerStyle="my-4"
-        defaultValue=""
+        defaultValue={PartnerObj.logo}
         updateFormValue={handleImageUpload}
-        updateType="image"
+        updateType="logo"
       />
       <ImageUploader
         labelTitle="Upload an image"
         containerStyle="my-4"
-        defaultValue=""
+        defaultValue={PartnerObj.image}
         updateFormValue={handleImageUpload}
         updateType="image"
       />
@@ -93,10 +119,10 @@ function AddPartnerModalBody({ closeModal }) {
         labelStyle="text-lg"
         type="text"
         containerStyle="my-4"
-        defaultValue={PartnerObj.message}
+        defaultValue={PartnerObj.desc}
         placeholder="Type your description here"
         updateFormValue={updateFormValue}
-        updateType="message"
+        updateType="desc"
       />
 
       <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
@@ -106,7 +132,7 @@ function AddPartnerModalBody({ closeModal }) {
         </button>
         <button
           className="btn btn-primary px-6"
-          onClick={() => saveNewPartner()}
+          onClick={() => handleCreatePartner()}
         >
           Save
         </button>

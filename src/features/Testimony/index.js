@@ -2,15 +2,15 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TitleCard from "../../components/Cards/TitleCard";
 import { openModal } from "../common/modalSlice";
-import { getTestimonyContent } from "./testimonySlice";
-import { RECENT_TRANSACTIONS } from "../../utils/dummyData";
 import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
 } from "../../utils/globalConstantUtil";
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
+import EyeIcon from "@heroicons/react/24/outline/EyeIcon";
 import { showNotification } from "../common/headerSlice";
 import SearchBar from "../../components/Input/SearchBar";
+import { getTestimonies } from "../../app/reducers/app";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -40,14 +40,38 @@ const TopSideButtons = () => {
 
 function Testimony() {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [testimonies, setTestimonies] = useState([]);
+
+  console.log(testimonies);
+
+  const handleGetTestimony = async () => {
+    try {
+      await dispatch(getTestimonies()).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          dispatch(
+            showNotification({
+              message: res.payload,
+              status: 1,
+            })
+          );
+          setLoading(false);
+          return;
+        }
+        setTestimonies(res.payload);
+        return;
+      });
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+  };
 
   useEffect(() => {
-    dispatch(getTestimonyContent());
+    handleGetTestimony();
   }, []);
 
-  const dbData = false;
-
-  const deleteCurrentTestimony = (index) => {
+  const deleteCurrentTestimony = (id) => {
     dispatch(
       openModal({
         title: "Confirmation",
@@ -55,7 +79,7 @@ function Testimony() {
         extraObject: {
           message: `Are you sure you want to delete this testimony?`,
           type: CONFIRMATION_MODAL_CLOSE_TYPES.TESTIMONY_DELETE,
-          index,
+          id,
         },
       })
     );
@@ -73,59 +97,48 @@ function Testimony() {
           <table className="table w-full">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Message</th>
-                <th>Company</th>
-                <th>Action</th>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>School</th>
+                <th>Rating</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <div className="flex items-center space-x-3">
-                    <div className="avatar">
-                      <div className="mask mask-circle w-12 h-12">
-                        <img
-                          src="https://reqres.in/img/faces/1-image.jpg"
-                          alt="Avatar"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="font-bold">Randy</div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <p>
-                    In the example above, the handleTextAreaChange function logs
-                    the updated value to the console. You can replace this with
-                    your own logic to handle the updated value as needed. Ensure
-                    that the TextAreaInput component and the
-                    handleTextAreaChange function are within a parent component
-                    or a functional component to render them correctly.
-                  </p>
-                </td>
-                <td>
-                  <div>
-                    <div className="font-bold">Quatana Experimental 1 & 2</div>
-                  </div>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-square btn-ghost"
-                    onClick={() => deleteCurrentTestimony(1)}
-                  >
-                    <TrashIcon className="w-5" />
-                  </button>
-                </td>
-              </tr>
-              {dbData === false && (
+              {testimonies.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4">
+                  <td colSpan="7" className="text-center py-4">
                     No records found
                   </td>
                 </tr>
+              ) : (
+                testimonies?.map((testimony) => (
+                  <tr key={testimony._id}>
+                    <td>
+                      <img src={testimony.image} alt="partner image" />
+                    </td>
+                    <td>
+                      <div className="font-bold">{testimony.title}</div>
+                    </td>
+                    <td>{testimony.desc}</td>
+                    <td>{testimony.school}</td>
+                    <td>{testimony.rating}</td>
+                    <td>
+                      <button
+                        className="btn btn-square btn-ghost"
+                        // onClick={() => openShowPartnerModal(partners._id)}
+                      >
+                        <EyeIcon className="w-5" />
+                      </button>
+                      <button
+                        className="btn btn-square btn-ghost"
+                        onClick={() => deleteCurrentTestimony(testimony._id)}
+                      >
+                        <TrashIcon className="w-5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>

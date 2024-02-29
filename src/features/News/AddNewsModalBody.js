@@ -2,16 +2,16 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import InputText from "../../components/Input/InputText";
 import TextAreaInput from "../../components/Input/TextAreaInput";
-import SelectBox from "../../components/Input/SelectBox";
 import ErrorText from "../../components/Typography/ErrorText";
 import { showNotification } from "../common/headerSlice";
-import { addNews, deleteNews } from "./newsSlice";
 import ImageUploader from "../../components/Input/ImageUploader";
+import { createNews } from "../../app/reducers/app";
 
 const INITIAL_NEWS_OBJ = {
-  title: "",
   image: "",
-  description: "",
+  title: "",
+  desc: "",
+  link: "",
 };
 
 function AddNewsModalBody({ closeModal }) {
@@ -20,23 +20,52 @@ function AddNewsModalBody({ closeModal }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [newsObj, setnewsObj] = useState(INITIAL_NEWS_OBJ);
 
-  const saveNews = () => {
-    if (newsObj.title.trim() === "")
-      return setErrorMessage("Title name is required!");
-    else if (newsObj.description.trim() === "")
-      return setErrorMessage("Event description is required!");
-    else {
-      let newsObj = {
-        id: 7,
-        title: newsObj.title,
-        image: newsObj.image,
-        description: newsObj.description,
-      };
-      dispatch(addNews({ newsObj }));
-      dispatch(
-        showNotification({ message: "News succesfully Added!", status: 1 })
-      );
-      closeModal();
+  const handleCreateNews = async () => {
+    try {
+      if (
+        // eventObj.category &&
+        newsObj.image &&
+        newsObj.title &&
+        newsObj.link &&
+        newsObj.desc
+      ) {
+        setLoading(true);
+        const newNewsObj = {
+          image: newsObj.image,
+          title: newsObj.title,
+          desc: newsObj.desc,
+          link: newsObj.link,
+        };
+        await dispatch(createNews(newNewsObj)).then((res) => {
+          if (res.meta.requestStatus === "rejected") {
+            dispatch(
+              showNotification({
+                message: res.payload,
+                status: 1,
+              })
+            );
+            setLoading(false);
+            return;
+          } else {
+            dispatch(
+              showNotification({
+                message: res.payload.message,
+                status: 2,
+              })
+            );
+            setLoading(false);
+            return;
+          }
+        });
+      } else {
+        dispatch(
+          showNotification({ message: "All field are required!", status: 1 })
+        );
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      return;
     }
   };
 
@@ -44,27 +73,30 @@ function AddNewsModalBody({ closeModal }) {
     setErrorMessage("");
     setnewsObj({ ...newsObj, [updateType]: value });
   };
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const handleImageUpload = (value) => {
-    console.log(value);
-    // handle the uploaded image here
-  };
 
   return (
     <>
       <InputText
         type="text"
         defaultValue={newsObj.title}
-        updateType="name"
+        updateType="title"
         containerStyle="mt-4"
-        labelTitle="Name"
+        labelTitle="Title"
+        updateFormValue={updateFormValue}
+      />
+      <InputText
+        type="text"
+        defaultValue={newsObj.title}
+        updateType="link"
+        containerStyle="mt-4"
+        labelTitle="Link"
         updateFormValue={updateFormValue}
       />
       <ImageUploader
         labelTitle="Upload an image"
         containerStyle="my-4"
         defaultValue={newsObj.image}
-        updateFormValue={handleImageUpload}
+        updateFormValue={updateFormValue}
         updateType="image"
       />
       <TextAreaInput
@@ -72,7 +104,7 @@ function AddNewsModalBody({ closeModal }) {
         labelStyle="text-lg"
         type="text"
         containerStyle="my-4"
-        defaultValue={newsObj.description}
+        defaultValue={newsObj.desc}
         placeholder="Type your description here"
         updateFormValue={updateFormValue}
         updateType="message"
@@ -83,7 +115,7 @@ function AddNewsModalBody({ closeModal }) {
         <button className="btn btn-ghost" onClick={() => closeModal()}>
           Cancel
         </button>
-        <button className="btn btn-primary px-6" onClick={() => saveNews()}>
+        <button className="btn btn-primary px-6" onClick={() => handleCreateNews()}>
           Save
         </button>
       </div>

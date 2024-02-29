@@ -3,14 +3,16 @@ import { useDispatch } from "react-redux";
 import InputText from "../../components/Input/InputText";
 import ErrorText from "../../components/Typography/ErrorText";
 import { showNotification } from "../common/headerSlice";
-import { addNewTestimony } from "./testimonySlice";
 import TextAreaInput from "../../components/Input/TextAreaInput";
 import ImageUploader from "../../components/Input/ImageUploader";
+import { createTestimony } from "../../app/reducers/app";
 
 const INITIAL_TESTIMONY_OBJ = {
-  name: "",
-  company: "",
-  message: "",
+  image: "",
+  title: "",
+  desc: "",
+  school: "",
+  rating: "",
 };
 
 function AddTestimonyModalBody({ closeModal }) {
@@ -19,23 +21,54 @@ function AddTestimonyModalBody({ closeModal }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [TestimonyObj, setTestimonyObj] = useState(INITIAL_TESTIMONY_OBJ);
 
-  const saveNewTestimony = () => {
-    if (TestimonyObj.name.trim() === "")
-      return setErrorMessage("Name is required!");
-    else if (TestimonyObj.message.trim() === "")
-      return setErrorMessage("A testimony is required!");
-    else {
-      let newTestimonyObj = {
-        id: 1,
-        name: TestimonyObj.name,
-        message: TestimonyObj.message,
-        company: TestimonyObj.company,
-      };
-      dispatch(addNewTestimony({ newTestimonyObj }));
-      dispatch(
-        showNotification({ message: "New Testimony added!", status: 1 })
-      );
-      closeModal();
+  const handleCreateTestimony = async () => {
+    try {
+      if (
+        // eventObj.category &&
+        TestimonyObj.image &&
+        TestimonyObj.title &&
+        TestimonyObj.desc &&
+        TestimonyObj.school &&
+        TestimonyObj.rating
+      ) {
+        setLoading(true);
+        const newTestimonyObj = {
+          image: TestimonyObj.image,
+          title: TestimonyObj.title,
+          desc: TestimonyObj.desc,
+          school: TestimonyObj.school,
+          rating: TestimonyObj.rating,
+        };
+        await dispatch(createTestimony(newTestimonyObj)).then((res) => {
+          if (res.meta.requestStatus === "rejected") {
+            dispatch(
+              showNotification({
+                message: res.payload,
+                status: 1,
+              })
+            );
+            setLoading(false);
+            return;
+          } else {
+            dispatch(
+              showNotification({
+                message: res.payload.message,
+                status: 1,
+              })
+            );
+            setLoading(false);
+            return;
+          }
+        });
+      } else {
+        dispatch(
+          showNotification({ message: "All field are required!", status: 1 })
+        );
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      return;
     }
   };
 
@@ -52,36 +85,44 @@ function AddTestimonyModalBody({ closeModal }) {
     <>
       <InputText
         type="text"
-        defaultValue={TestimonyObj.name}
-        updateType="name"
+        defaultValue={TestimonyObj.title}
+        updateType="title"
         containerStyle="mt-4"
-        labelTitle="Name"
+        labelTitle="Title"
         updateFormValue={updateFormValue}
       />
       <InputText
         type="text"
-        defaultValue={TestimonyObj.company}
-        updateType="company"
+        defaultValue={TestimonyObj.school}
+        updateType="shool"
         containerStyle="mt-4"
-        labelTitle="Company"
+        labelTitle="School"
+        updateFormValue={updateFormValue}
+      />
+      <InputText
+        type="number"
+        defaultValue={TestimonyObj.rating}
+        updateType="rating"
+        containerStyle="mt-4"
+        labelTitle="Rating"
         updateFormValue={updateFormValue}
       />
       <ImageUploader
         labelTitle="Upload an image"
         containerStyle="my-4"
-        defaultValue=""
+        defaultValue={TestimonyObj.image}
         updateFormValue={handleImageUpload}
         updateType="image"
       />
       <TextAreaInput
-        labelTitle="Enter your message"
+        labelTitle="Enter your Testimony"
         labelStyle="text-lg"
         type="text"
         containerStyle="my-4"
-        defaultValue={TestimonyObj.message}
+        defaultValue={TestimonyObj.desc}
         placeholder="Type your testimony here"
         updateFormValue={updateFormValue}
-        updateType="message"
+        updateType="description"
       />
       <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
       <div className="modal-action">
@@ -90,7 +131,7 @@ function AddTestimonyModalBody({ closeModal }) {
         </button>
         <button
           className="btn btn-primary px-6"
-          onClick={() => saveNewTestimony()}
+          onClick={() => handleCreateTestimony()}
         >
           Save
         </button>

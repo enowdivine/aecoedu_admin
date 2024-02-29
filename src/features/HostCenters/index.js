@@ -1,9 +1,8 @@
 import moment from "moment";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TitleCard from "../../components/Cards/TitleCard";
 import { openModal } from "../common/modalSlice";
-import { getHostCenterContent, deleteHostCenter } from "./hostcenterSlice";
 import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
@@ -11,6 +10,8 @@ import {
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
 import { showNotification } from "../common/headerSlice";
 import SearchBar from "../../components/Input/SearchBar";
+import EyeIcon from "@heroicons/react/24/outline/EyeIcon";
+import { getHostCenters } from "../../app/reducers/app";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -41,13 +42,37 @@ const TopSideButtons = () => {
 function HostCenter() {
   const dispatch = useDispatch();
 
+  const [loading, setLoading] = useState(false);
+  const [hostcenters, setHostCenter] = useState([]);
+
+  console.log(hostcenters);
+
+  const handleGetHostCenters = async () => {
+    try {
+      await dispatch(getHostCenters()).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          dispatch(
+            showNotification({
+              message: res.payload,
+              status: 1,
+            })
+          );
+          setLoading(false);
+          return;
+        }
+        setHostCenter(res.payload);
+        return;
+      });
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+  };
+
   useEffect(() => {
-    dispatch(getHostCenterContent());
+    handleGetHostCenters();
   }, []);
-
-  const dbData = false;
-
-  const deleteCurrentHostCenter = (index) => {
+  const deleteCurrentHostCenter = (id) => {
     dispatch(
       openModal({
         title: "Confirmation",
@@ -55,7 +80,7 @@ function HostCenter() {
         extraObject: {
           message: `Are you sure you want to delete this HostCenter?`,
           type: CONFIRMATION_MODAL_CLOSE_TYPES.HOSTCENTER_DELETE,
-          index,
+          id
         },
       })
     );
@@ -73,36 +98,46 @@ function HostCenter() {
           <table className="table w-full">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>image</th>
+                <th>Image</th>
+                <th>Logo</th>
+                <th>Title</th>
                 <th>Description</th>
+                <th>Link</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <div>
-                    <div className="font-bold">John</div>
-                  </div>
-                </td>
-                <td>img/thre/thid/juyt/ionp.jpeg</td>
-                <td>City the the </td>
-                <td>
-                  <button
-                    className="btn btn-square btn-ghost"
-                    onClick={() => deleteCurrentHostCenter(1)}
-                  >
-                    <TrashIcon className="w-5" />
-                  </button>
-                </td>
-              </tr>
-              {dbData === false && (
+              {hostcenters.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4">
+                  <td colSpan="7" className="text-center py-4">
                     No records found
                   </td>
                 </tr>
+              ) : (
+                hostcenters?.map((hostcenter) => (
+                  <tr key={hostcenter._id}>
+                    <td>
+                      <img src={hostcenter.image} alt="hostcenter image" />
+                    </td>
+                    <td>
+                      <img src={hostcenter.logo} alt="hostcenter logo" />
+                    </td>
+                    <td>
+                      <div className="font-bold">{hostcenter.title}</div>
+                    </td>
+                    <td>{hostcenter.desc}</td>
+                    <td>{hostcenter.link}</td>
+                    <td>
+                      <Link to={`/hostcenter/show/${hostcenter._id}`} className="btn btn-square btn-ghost"><EyeIcon className="w-5" /></Link>
+                      <button
+                        className="btn btn-square btn-ghost"
+                        onClick={() => deleteCurrentHostCenter(hostcenter._id)}
+                      >
+                        <TrashIcon className="w-5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>

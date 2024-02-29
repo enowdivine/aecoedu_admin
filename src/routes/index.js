@@ -13,6 +13,7 @@ const Testimony = lazy(() => import('../pages/protected/Testimony'))
 const Events = lazy(() => import('../pages/protected/Events'))
 const Partners = lazy(() => import('../pages/protected/Partners'))
 const News = lazy(() => import('../pages/protected/News'))
+const show = lazy(() => import('../pages/ShowEventModalBody'))
 // const Team = lazy(() => import('../pages/protected/Team'))
 // const Programs = lazy(() => import('../pages/protected/Programs'))
 // const Course = lazy(() => import('../pages/protected/Course'))
@@ -31,8 +32,12 @@ const ProfileSettings = lazy(() => import('../pages/protected/ProfileSettings'))
 
 const routes = [
   {
-    path: '/dashboard', // the url
+    path: "/dashboard", // the url
     component: Dashboard, // view rendered
+  },
+  {
+    path: "/event/show", // the url
+    component: show, // view rendered
   },
   // {
   //   path: '/welcome', // the url
@@ -43,7 +48,7 @@ const routes = [
   //   component: Rooms,
   // },
   {
-    path: '/testimony',
+    path: "/testimony",
     component: Testimony,
   },
   // {
@@ -51,15 +56,15 @@ const routes = [
   //   component: Gallery,
   // },
   {
-    path: '/events',
+    path: "/events",
     component: Events,
   },
   {
-    path: '/partners',
+    path: "/partners",
     component: Partners,
   },
   {
-    path: '/news',
+    path: "/news",
     component: News,
   },
   // {
@@ -67,7 +72,7 @@ const routes = [
   //   component: Team,
   // },
   {
-    path: '/hostcenters',
+    path: "/hostcenters",
     component: HostCenter,
   },
   // {
@@ -91,7 +96,7 @@ const routes = [
   //   component: Bookings,
   // },
   {
-    path: '/settings-profile',
+    path: "/settings-profile",
     component: ProfileSettings,
   },
   // {
@@ -115,17 +120,17 @@ const routes = [
   //   component: Integration,
   // },
   {
-    path: '/charts',
+    path: "/charts",
     component: Charts,
   },
   {
-    path: '/404',
+    path: "/404",
     component: Page404,
   },
   {
-    path: '/blank',
+    path: "/blank",
     component: Blank,
   },
-]
+];
 
 export default routes

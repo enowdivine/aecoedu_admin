@@ -1,85 +1,94 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import InputText from "../../components/Input/InputText";
 import TextAreaInput from "../../components/Input/TextAreaInput";
-import SelectBox from "../../components/Input/SelectBox";
 import ErrorText from "../../components/Typography/ErrorText";
 import { showNotification } from "../common/headerSlice";
-import { addNewEvents, deleteEvents } from "./eventSlice";
-import ImageUploader from "../../components/Input/ImageUploader";
+import { createEvent, getSingleEvent } from "../../app/reducers/app";
 
 const INITIAL_EVENT_OBJ = {
-  name: "",
+  title: "",
   category: "",
   date: "",
-  image: "",
-  description: "",
+  link: "",
+  eventTime: "",
   location: "",
+  details: "",
 };
 
 function AddEventModalBody({ closeModal }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [eventObj, seteventObj] = useState(INITIAL_EVENT_OBJ);
+  const [eventObj, setEventObj] = useState(INITIAL_EVENT_OBJ);
 
-  const saveNewEvent = () => {
-    if (eventObj.name.trim() === "")
-      return setErrorMessage("Event name is required!");
-    else if (eventObj.category.trim() === "")
-      return setErrorMessage("Event category is required!");
-    else if (eventObj.date.trim() === "")
-      return setErrorMessage("Event date is required!");
-    else if (eventObj.description.trim() === "")
-      return setErrorMessage("Event description is required!");
-    else if (eventObj.location.trim() === "")
-      return setErrorMessage("Event location is required!");
-    else {
-      let neweventObj = {
-        id: 7,
-        name: eventObj.name,
-        category: eventObj.category,
-        date: eventObj.date,
-        image: eventObj.image,
-        description: eventObj.description,
-        location: eventObj.location,
-      };
-      dispatch(addNewEvents({ neweventObj }));
-      dispatch(
-        showNotification({ message: "Event succesfully Added!", status: 1 })
-      );
-      closeModal();
+  const handleCreateEvent = async () => {
+    try {
+      if (
+        eventObj.title &&
+        eventObj.location &&
+        eventObj.link &&
+        eventObj.eventTime &&
+        eventObj.details &&
+        eventObj.category &&
+        eventObj.date
+      ) {
+        setLoading(true);
+        const newEventObj = {
+          title: eventObj.title,
+          category: eventObj.category,
+          date: eventObj.date,
+          link: eventObj.link,
+          eventTime: eventObj.eventTime,
+          location: eventObj.location,
+          details: eventObj.details,
+        };
+        await dispatch(createEvent(newEventObj)).then((res) => {
+          if (res.meta.requestStatus === "rejected") {
+            dispatch(
+              showNotification({
+                message: res.payload,
+                status: 1,
+              })
+            );
+            setLoading(false);
+            return;
+          } else {
+            dispatch(
+              showNotification({
+                message: res.payload.message,
+                status: 1,
+              })
+            );
+            setLoading(false);
+            return;
+          }
+        });
+      } else {
+        dispatch(
+          showNotification({ message: "All field are required!", status: 1 })
+        );
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      return;
     }
   };
 
   const updateFormValue = ({ updateType, value }) => {
     setErrorMessage("");
-    seteventObj({ ...eventObj, [updateType]: value });
-  };
-
-  const options = [
-    { value: "ConferenceHall", name: "Conference Hall" },
-    { value: "OutDoorDinning", name: "OutDoor Dinning" },
-    { value: "GuestApartment", name: "Guest Apartment" },
-    { value: "OfficeRental", name: "Office Rental" },
-    { value: "BeautySalon", name: "Beauty Salon" },
-    { value: "BillBoardAdverting", name: "BillBoard Adverting" },
-    // Add more options as needed
-  ];
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const handleImageUpload = (value) => {
-    console.log(value);
-    // handle the uploaded image here
+    setEventObj({ ...eventObj, [updateType]: value });
   };
 
   return (
     <>
       <InputText
         type="text"
-        defaultValue={eventObj.name}
-        updateType="name"
+        defaultValue={eventObj.title}
+        updateType="title"
         containerStyle="mt-4"
-        labelTitle="Name"
+        labelTitle="Title"
         updateFormValue={updateFormValue}
       />
       <InputText
@@ -90,40 +99,51 @@ function AddEventModalBody({ closeModal }) {
         labelTitle="Location"
         updateFormValue={updateFormValue}
       />
-      <SelectBox
-        labelTitle="Select Event Category"
-        defaultValue={selectedOptions}
-        options={options}
-        containerStyle="my-4 w-full"
-        placeholder="Select Category"
-        labelStyle="text-lg"
-        updateType="options"
+
+      <InputText
+        type="text"
+        defaultValue={eventObj.category}
+        updateType="category"
+        containerStyle="mt-4"
+        labelTitle="Category"
         updateFormValue={updateFormValue}
       />
+     
       <InputText
         type="date"
         defaultValue={eventObj.date}
-        updateType="name"
+        updateType="date"
         containerStyle="mt-4"
-        labelTitle="Name"
+        labelTitle="Date"
         updateFormValue={updateFormValue}
       />
-      <ImageUploader
-        labelTitle="Upload an image"
-        containerStyle="my-4"
-        defaultValue={eventObj.image}
-        updateFormValue={handleImageUpload}
-        updateType="image"
+      <InputText
+        type="text"
+        defaultValue={eventObj.link}
+        updateType="link"
+        containerStyle="mt-4"
+        labelTitle="Link"
+        updateFormValue={updateFormValue}
       />
+
+      <InputText
+        type="text"
+        defaultValue={eventObj.eventTime}
+        updateType="eventTime"
+        containerStyle="mt-4"
+        labelTitle="Event Time"
+        updateFormValue={updateFormValue}
+      />
+
       <TextAreaInput
-        labelTitle="Enter your event discription"
+        labelTitle="Event Details"
         labelStyle="text-lg"
         type="text"
         containerStyle="my-4"
-        defaultValue={eventObj.description}
-        placeholder="Type your description here"
+        defaultValue={eventObj.details}
+        placeholder="Type your detail here"
         updateFormValue={updateFormValue}
-        updateType="message"
+        updateType="details"
       />
 
       <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
@@ -131,7 +151,10 @@ function AddEventModalBody({ closeModal }) {
         <button className="btn btn-ghost" onClick={() => closeModal()}>
           Cancel
         </button>
-        <button className="btn btn-primary px-6" onClick={() => saveNewEvent()}>
+        <button
+          className="btn btn-primary px-6"
+          onClick={() => handleCreateEvent()}
+        >
           Save
         </button>
       </div>
@@ -140,3 +163,4 @@ function AddEventModalBody({ closeModal }) {
 }
 
 export default AddEventModalBody;
+

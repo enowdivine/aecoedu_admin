@@ -6,6 +6,8 @@ function ImageUploader({
   defaultValue,
   updateFormValue,
   updateType,
+  // Optional unique key for each component instance
+  key,
 }) {
   const [selectedImage, setSelectedImage] = useState(defaultValue);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -19,10 +21,10 @@ function ImageUploader({
     e.preventDefault();
     setIsDragOver(false);
   };
-
+  
   const handleDragOver = (e) => {
     e.preventDefault();
-    setIsDragOver(true);
+    setIsDragOver(true); // Assuming this function sets the isDragOver state
   };
 
   const handleDrop = (e) => {
@@ -52,6 +54,7 @@ function ImageUploader({
 
   return (
     <div
+      key={key} // Add key if needed for uniqueness
       className={`form-control w-full ${containerStyle}`}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
@@ -62,7 +65,7 @@ function ImageUploader({
         <span className="label-text text-base-content">{labelTitle}</span>
       </label>
       <div
-        className={`h-40 input  input-bordered  border-2 border-dashed rounded-lg flex justify-center items-center  ${
+        className={`h-40 input input-bordered border-2 border-dashed rounded-lg flex justify-center items-center ${
           isDragOver ? "bg-gray-100" : ""
         }`}
       >
