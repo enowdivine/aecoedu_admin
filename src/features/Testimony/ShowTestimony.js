@@ -22,6 +22,7 @@ function ShowTestimony() {
   const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [TestimonyObj, setTestimonyObj] = useState(INITIAL_TESTIMONY_OBJ);
   const [testimonies, setTestimonies] = useState([]);
 
   console.log(testimonies);

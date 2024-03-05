@@ -43,6 +43,7 @@ function App() {
           <Route path="/event/show/:id" element={<ShowEventModalBody />} />
           <Route path="/hostcenter/show/:id" element={<ShowHostCenter />} />
           <Route path="/news/show/:id" element={<ShowNews />} />
+          {/* <Route path="/testimony/show/:id" element={} /> */}
           
           {/* Place new routes over this */}
           <Route path="/app/*" element={<Layout />} />

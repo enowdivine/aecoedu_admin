@@ -7,12 +7,8 @@ const initialState = {};
 
 export const getEvents = createAsyncThunk("app/getEvents", async (thunkAPI) => {
   try {
-   const response = await axios.get(`${base_url}/events`, {
-     headers: {
-       "Content-Type": "application/json",
-     },
-   });
-   return response.data;
+    const response = await axios.get(`${base_url}/events`);
+    return response.data;
   } catch (error) {
     const message =
       (error.message && error.response.data && error.response.data.message) ||
@@ -28,11 +24,7 @@ export const getSingleEvent = createAsyncThunk(
   async (id, thunkAPI) => {
     console.log(id);
     try {
-      const response = await axios.get(`${base_url}/events`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.get(`${base_url}/events/${id}`);
       return response.data;
     } catch (error) {
       const message =
@@ -48,7 +40,7 @@ export const getSingleEvent = createAsyncThunk(
 export const createEvent = createAsyncThunk(
   "app/createEvent",
   async (data, thunkAPI) => {
-    console.log(data)
+    console.log(data);
     try {
       const response = await axios.post(`${base_url}/events/create`, data, {
         headers: {
@@ -70,7 +62,7 @@ export const createEvent = createAsyncThunk(
 export const updateEvent = createAsyncThunk(
   "app/updateEvent",
   async (data, thunkAPI) => {
-    console.log(data.title)
+    console.log(data.title);
     try {
       const response = await axios.put(
         `${base_url}/events/update/${data.id}`,
@@ -97,9 +89,7 @@ export const deleteEvent = createAsyncThunk(
   "app/deleteEvent",
   async (id, thunkAPI) => {
     try {
-      console.log(id);
       const eventId = id;
-      console.log(eventId);
       const response = await axios.delete(
         `${base_url}/events/delete/${eventId.id}`
       );
@@ -119,13 +109,8 @@ export const deleteEvent = createAsyncThunk(
 //
 export const getNews = createAsyncThunk("app/getNews", async (thunkAPI) => {
   try {
-    const response = await axios.get(`${base_url}/news`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.get(`${base_url}/news`);
     return response.data;
-
   } catch (error) {
     const message =
       (error.message && error.response.data && error.response.data.message) ||
@@ -205,7 +190,9 @@ export const deleteNews = createAsyncThunk(
     console.log(id);
     const newsId = id;
     try {
-      const response = await axios.delete(`${base_url}//deletnews/${newsId.id}`);
+      const response = await axios.delete(
+        `${base_url}//deletnews/${newsId.id}`
+      );
       return response.data;
     } catch (error) {
       const message =
@@ -303,10 +290,12 @@ export const updatePartner = createAsyncThunk(
 export const deletePartner = createAsyncThunk(
   "app/deletePartner",
   async (id, thunkAPI) => {
-     console.log(id);
-     const partnerId = id;
+    console.log(id);
+    const partnerId = id;
     try {
-      const response = await axios.delete(`${base_url}/partners/delete/${partnerId.id}`);
+      const response = await axios.delete(
+        `${base_url}/partners/delete/${partnerId.id}`
+      );
       return response.data;
     } catch (error) {
       const message =
@@ -404,10 +393,11 @@ export const updateTestimony = createAsyncThunk(
 export const deleteTestimony = createAsyncThunk(
   "app/deleteTestimony",
   async (id, thunkAPI) => {
-    console.log(id);
     const TestimonyId = id;
     try {
-      const response = await axios.delete(`${base_url}/testimony/delete/${TestimonyId.id}`);
+      const response = await axios.delete(
+        `${base_url}/testimony/delete/${TestimonyId.id}`
+      );
       return response.data;
     } catch (error) {
       const message =
@@ -509,8 +499,8 @@ export const updateHostCenter = createAsyncThunk(
 export const deleteHostCenter = createAsyncThunk(
   "app/deleteHostCenter",
   async (id, thunkAPI) => {
-     console.log(id);
-     const hcId = id;
+    console.log(id);
+    const hcId = id;
     try {
       const response = await axios.delete(
         `${base_url}/hostcenters/delete/${hcId.id}`
