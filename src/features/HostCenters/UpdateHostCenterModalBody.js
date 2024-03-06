@@ -1,79 +1,53 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import InputText from "../../components/Input/InputText";
-import TextAreaInput from "../../components/Input/TextAreaInput";
 import ErrorText from "../../components/Typography/ErrorText";
-import { showNotification } from "../common/headerSlice";
-import { createHostCenter } from "../../app/reducers/app";
+import { showNotification } from "../common/headerSlice"
+import { updateHostCenter } from "../../app/reducers/app";
 
-const INITIAL_HOSTCENTER_OBJ = {
-  images: [], // Use an array for multiple images
-  title: "",
-  desc: "",
-  link: "",
-};
-
-function AddHostCenterModalBody({ closeModal }) {
+function UpdateHostCenterModalBody({ closeModal, extraObject }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [hostcenterObj, sethostcenterObj] = useState(INITIAL_HOSTCENTER_OBJ);
+  const [title, setTitle] = useState("")
+  const [link, setLink] = useState("")
+  const [desc, setDesc] = useState("")
+  const [image, setImage] = useState("")
+  const [logo, setLogo] = useState("")
+
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectedLogoFiles, setSelectedLogoFiles] = useState([]);
   const [previews, setPreviews] = useState([])
   const [previewsLogo, setLogoPreviews] = useState([])
 
-  // Function to update other form values
-  const updateFormValue = ({ updateType, value }) => {
-    setErrorMessage("");
-    sethostcenterObj({ ...hostcenterObj, [updateType]: value });
-  };
+  const { item } = extraObject
 
-  const handleCreatePartner = async () => {
-    try {
-      if (
-        hostcenterObj.title &&
-        hostcenterObj.desc &&
-        hostcenterObj.link
-      ) {
-        setLoading(true);
-        const formData = new FormData();
-        formData.append('logo', selectedLogoFiles[0]);
-        formData.append('image', selectedFiles[0]);
-        formData.append('title', hostcenterObj.title,);
-        formData.append('link', hostcenterObj.link);
-        formData.append('desc', hostcenterObj.desc);
-        await dispatch(createHostCenter(formData)).then((res) => {
-          if (res.meta.requestStatus === "rejected") {
-            setErrorMessage(res.payload)
-            setLoading(false)
-            return
-          }
-          dispatch(showNotification({ message: "New Host Center Added!", status: 1 }));
+  const updateHandler = async () => {
+    if (title && link && desc) {
+      const formData = new FormData();
+      formData.append('logo', selectedLogoFiles[0]);
+      formData.append('image', selectedFiles[0]);
+      formData.append('title', title,);
+      formData.append('link', link);
+      formData.append('desc', desc);
+      const data = { id: item._id, formData }
+      await dispatch(updateHostCenter(data)).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          setErrorMessage(res.payload)
           setLoading(false)
-          closeModal();
-        }).catch((err) => {
-          console.error(err)
-          setLoading(false)
-        })
-      } else {
-        setErrorMessage("All fields are required!");
-      }
-    } catch (error) {
-      console.error(error);
-      setErrorMessage("An error occurred. Please try again later.");
-      setLoading(false);
+          return
+        }
+        dispatch(showNotification({ message: "Host center updated!", status: 1 }));
+        setLoading(false)
+        closeModal();
+      }).catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
     }
-  };
-
-  const handleFileChange = (event) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const newSelectedFiles = [...selectedFiles, ...files];
-      setSelectedFiles(newSelectedFiles);
-      displayImagePreviews(newSelectedFiles);
+    else {
+      return setErrorMessage("All field is required!");
     }
-  };
+  }
 
   const handleLogoFileChange = (event) => {
     const files = event.target.files;
@@ -95,6 +69,25 @@ function AddHostCenterModalBody({ closeModal }) {
         }
       };
       reader.readAsDataURL(files[i]);
+    }
+  };
+
+  const removeLogoImage = (index) => {
+    const newSelectedFiles = [...selectedLogoFiles];
+    newSelectedFiles.splice(index, 1);
+    setSelectedLogoFiles(newSelectedFiles);
+
+    const newImagePreviewUrls = [...previewsLogo];
+    newImagePreviewUrls.splice(index, 1);
+    setLogoPreviews(newImagePreviewUrls);
+  };
+
+  const handleFileChange = (event) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const newSelectedFiles = [...selectedFiles, ...files];
+      setSelectedFiles(newSelectedFiles);
+      displayImagePreviews(newSelectedFiles);
     }
   };
 
@@ -122,46 +115,31 @@ function AddHostCenterModalBody({ closeModal }) {
     setPreviews(newImagePreviewUrls);
   };
 
-  const removeLogoImage = (index) => {
-    const newSelectedFiles = [...selectedLogoFiles];
-    newSelectedFiles.splice(index, 1);
-    setSelectedLogoFiles(newSelectedFiles);
 
-    const newImagePreviewUrls = [...previewsLogo];
-    newImagePreviewUrls.splice(index, 1);
-    setLogoPreviews(newImagePreviewUrls);
-  };
+
+  useEffect(() => {
+    setTitle(item.title)
+    setDesc(item.desc)
+    setLink(item.link)
+    setLogo(item.logo)
+    setImage(item.image)
+  }, [item])
+
 
   return (
     <>
-      <InputText
-        type="text"
-        defaultValue={hostcenterObj.title}
-        updateType="title"
-        containerStyle="mt-4"
-        labelTitle="Title"
-        updateFormValue={updateFormValue}
-      />
-      <InputText
-        type="url"
-        defaultValue={hostcenterObj.link}
-        updateType="link"
-        containerStyle="mt-4"
-        labelTitle="link"
-        updateFormValue={updateFormValue}
-      />
+      <p style={{ marginTop: 20 }}>Title</p>
+      <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="input input-bordered w-full mt-2" />
 
-      <TextAreaInput
-        labelTitle="Enter Description"
-        labelStyle="text-lg"
-        type="text"
-        containerStyle="my-4"
-        defaultValue={hostcenterObj.desc}
-        updateFormValue={updateFormValue}
-        updateType="desc"
-      />
+      <p style={{ marginTop: 20 }}>Link</p>
+      <input type="text" value={link} onChange={(e) => setLink(e.target.value)} className="input input-bordered w-full mt-2" />
 
-      <p style={{ marginTop: 20 }}>Logo Image</p>
+      <p style={{ marginTop: 20 }}>Description</p>
+      <textarea className="textarea textarea-bordered w-full" value={desc}
+        onChange={(e) => setDesc(e.target.value)}>
+      </textarea>
+
+      <p style={{ marginTop: 20 }}>Logo</p>
       <input
         type="file"
         accept="image/*"
@@ -178,6 +156,14 @@ function AddHostCenterModalBody({ closeModal }) {
           </div>
         ))}
       </ul>
+
+      <div style={{ width: "32%", margin: 2, }}>
+        <img
+          style={{ width: "100%", height: "100%", border: '1px solid #ccc', cursor: 'pointer' }}
+          src={`${process.env.REACT_APP_BASE_URL}/uploads/gallery/${logo}`}
+          alt="Image"
+        />
+      </div>
 
       <p style={{ marginTop: 20 }}>Image</p>
       <input
@@ -197,20 +183,27 @@ function AddHostCenterModalBody({ closeModal }) {
         ))}
       </ul>
 
+      <div style={{ width: "32%", margin: 2, }}>
+        <img
+          style={{ width: "100%", height: "100%", border: '1px solid #ccc', cursor: 'pointer' }}
+          src={`${process.env.REACT_APP_BASE_URL}/uploads/gallery/${image}`}
+          alt="Image"
+        />
+      </div>
+
+
+
       <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
       <div className="modal-action">
         <button className="btn btn-ghost" onClick={() => closeModal()}>
           Cancel
         </button>
-        <button
-          className="btn btn-primary px-6"
-          onClick={() => handleCreatePartner()}
-        >
-          Save
+        <button className="btn btn-primary px-6" onClick={() => updateHandler()}>
+          {loading ? "Loading..." : "Save"}
         </button>
       </div>
     </>
   );
 }
 
-export default AddHostCenterModalBody;
+export default UpdateHostCenterModalBody;

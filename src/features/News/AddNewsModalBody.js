@@ -4,11 +4,9 @@ import InputText from "../../components/Input/InputText";
 import TextAreaInput from "../../components/Input/TextAreaInput";
 import ErrorText from "../../components/Typography/ErrorText";
 import { showNotification } from "../common/headerSlice";
-import ImageUploader from "../../components/Input/ImageUploader";
 import { createNews } from "../../app/reducers/app";
 
 const INITIAL_NEWS_OBJ = {
-  image: "",
   title: "",
   desc: "",
   link: "",
@@ -19,47 +17,38 @@ function AddNewsModalBody({ closeModal }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [newsObj, setnewsObj] = useState(INITIAL_NEWS_OBJ);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previews, setPreviews] = useState([])
 
   const handleCreateNews = async () => {
     try {
       if (
-        // eventObj.category &&
-        newsObj.image &&
         newsObj.title &&
         newsObj.link &&
         newsObj.desc
       ) {
         setLoading(true);
-        const newNewsObj = {
-          image: newsObj.image,
-          title: newsObj.title,
-          desc: newsObj.desc,
-          link: newsObj.link,
-        };
-        await dispatch(createNews(newNewsObj)).then((res) => {
+        const formData = new FormData();
+        formData.append('image', selectedFiles[0]);
+        formData.append('title', newsObj.title,);
+        formData.append('link', newsObj.link);
+        formData.append('desc', newsObj.desc);
+        await dispatch(createNews(formData)).then((res) => {
           if (res.meta.requestStatus === "rejected") {
-            dispatch(
-              showNotification({
-                message: res.payload,
-                status: 1,
-              })
-            );
-            setLoading(false);
-            return;
-          } else {
-            dispatch(
-              showNotification({
-                message: res.payload.message,
-                status: 2,
-              })
-            );
-            setLoading(false);
-            return;
+            setErrorMessage(res.payload)
+            setLoading(false)
+            return
           }
-        });
+          dispatch(showNotification({ message: "News Added!", status: 1 }));
+          setLoading(false)
+          closeModal();
+        }).catch((err) => {
+          console.error(err)
+          setLoading(false)
+        })
       } else {
         dispatch(
-          showNotification({ message: "All field are required!", status: 1 })
+          showNotification({ message: "All field are required!", status: 0 })
         );
         return;
       }
@@ -67,6 +56,39 @@ function AddNewsModalBody({ closeModal }) {
       console.error(error);
       return;
     }
+  };
+
+  const handleFileChange = (event) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const newSelectedFiles = [...selectedFiles, ...files];
+      setSelectedFiles(newSelectedFiles);
+      displayImagePreviews(newSelectedFiles);
+    }
+  };
+
+  const displayImagePreviews = (files) => {
+    const urls = [];
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        urls.push(reader.result);
+        if (urls.length === files.length) {
+          setPreviews(urls);
+        }
+      };
+      reader.readAsDataURL(files[i]);
+    }
+  };
+
+  const removeImage = (index) => {
+    const newSelectedFiles = [...selectedFiles];
+    newSelectedFiles.splice(index, 1);
+    setSelectedFiles(newSelectedFiles);
+
+    const newImagePreviewUrls = [...previews];
+    newImagePreviewUrls.splice(index, 1);
+    setPreviews(newImagePreviewUrls);
   };
 
   const updateFormValue = ({ updateType, value }) => {
@@ -92,23 +114,33 @@ function AddNewsModalBody({ closeModal }) {
         labelTitle="Link"
         updateFormValue={updateFormValue}
       />
-      <ImageUploader
-        labelTitle="Upload an image"
-        containerStyle="my-4"
-        defaultValue={newsObj.image}
-        updateFormValue={updateFormValue}
-        updateType="image"
-      />
       <TextAreaInput
-        labelTitle="Enter your news discription"
+        labelTitle="Enter your news details"
         labelStyle="text-lg"
         type="text"
         containerStyle="my-4"
         defaultValue={newsObj.desc}
-        placeholder="Type your description here"
         updateFormValue={updateFormValue}
-        updateType="message"
+        updateType="desc"
       />
+
+      <p style={{ marginTop: 20 }}>Image</p>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange} className="input  input-bordered w-full mt-2" />
+
+      <ul style={{ display: 'flex', flexWrap: 'wrap', marginTop: 20 }}>
+        {previews?.map((url, index) => (
+          <div style={{ width: "32%", margin: 2 }}>
+            <img key={index} src={url} alt={`Image Preview ${index + 1}`}
+              style={{ width: "100%", height: '80%', display: 'flex', border: '1px solid #ccc', cursor: 'pointer' }} />
+            <p style={{ textAlign: 'right', cursor: 'pointer', color: 'red' }}
+              onClick={() => removeImage(index)}
+            >remove</p>
+          </div>
+        ))}
+      </ul>
 
       <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
       <div className="modal-action">

@@ -1,50 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import InputText from "../../components/Input/InputText";
 import ErrorText from "../../components/Typography/ErrorText";
-import { showNotification } from "../common/headerSlice";
-import TextAreaInput from "../../components/Input/TextAreaInput";
-import { createTestimony } from "../../app/reducers/app";
+import { showNotification } from "../common/headerSlice"
+import { updateNews } from "../../app/reducers/app";
 
-const INITIAL_TESTIMONY_OBJ = {
-  name: "",
-  desc: "",
-  school: "",
-  rating: "",
-};
-
-function AddTestimonyModalBody({ closeModal }) {
+function UpdateNewsModalBody({ closeModal, extraObject }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [TestimonyObj, setTestimonyObj] = useState(INITIAL_TESTIMONY_OBJ);
+  const [title, setTitle] = useState("")
+  const [link, setLink] = useState("")
+  const [desc, setDesc] = useState("")
+  const [image, setImage] = useState("")
+
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previews, setPreviews] = useState([])
 
-  const handleCreateTestimony = async () => {
-    if (TestimonyObj.name.trim() === "")
-      return setErrorMessage("Name is required!");
-    else if (TestimonyObj.school.trim() === "")
-      return setErrorMessage("School is required!")
-    else if (TestimonyObj.rating.trim() === "")
-      return setErrorMessage("Rating is required!");
-    else if (TestimonyObj.desc.trim() === "")
-      return setErrorMessage("Description is required!");
-    else {
-      setLoading(true)
+  const { item } = extraObject
+
+  const updateHandler = async () => {
+    if (title && link && desc) {
       const formData = new FormData();
       formData.append('image', selectedFiles[0]);
-      formData.append('name', TestimonyObj.name);
-      formData.append('school', TestimonyObj.school);
-      formData.append('desc', TestimonyObj.desc);
-      formData.append('rating', TestimonyObj.rating);
-      await dispatch(createTestimony(formData)).then((res) => {
+      formData.append('title', title,);
+      formData.append('link', link);
+      formData.append('desc', desc);
+      const data = { id: item._id, formData }
+      await dispatch(updateNews(data)).then((res) => {
         if (res.meta.requestStatus === "rejected") {
           setErrorMessage(res.payload)
           setLoading(false)
           return
         }
-        dispatch(showNotification({ message: "New Testimony Added!", status: 1 }));
+        dispatch(showNotification({ message: "News updated!", status: 1 }));
         setLoading(false)
         closeModal();
       }).catch((err) => {
@@ -52,7 +40,10 @@ function AddTestimonyModalBody({ closeModal }) {
         setLoading(false)
       })
     }
-  };
+    else {
+      return setErrorMessage("All field is required!");
+    }
+  }
 
   const handleFileChange = (event) => {
     const files = event.target.files;
@@ -87,48 +78,28 @@ function AddTestimonyModalBody({ closeModal }) {
     setPreviews(newImagePreviewUrls);
   };
 
-  const updateFormValue = ({ updateType, value }) => {
-    setErrorMessage("");
-    setTestimonyObj({ ...TestimonyObj, [updateType]: value });
-  };
+
+
+  useEffect(() => {
+    setTitle(item.title)
+    setDesc(item.desc)
+    setLink(item.link)
+    setImage(item.image)
+  }, [item])
+
 
   return (
     <>
-      <InputText
-        type="text"
-        defaultValue={TestimonyObj.title}
-        updateType="name"
-        containerStyle="mt-4"
-        labelTitle="Username"
-        updateFormValue={updateFormValue}
-      />
-      <InputText
-        type="text"
-        defaultValue={TestimonyObj.school}
-        updateType="school"
-        containerStyle="mt-4"
-        labelTitle="School"
-        updateFormValue={updateFormValue}
-      />
-      <InputText
-        type="number"
-        defaultValue={TestimonyObj.rating}
-        updateType="rating"
-        containerStyle="mt-4"
-        labelTitle="Rating"
-        updateFormValue={updateFormValue}
-      />
+      <p style={{ marginTop: 20 }}>Title</p>
+      <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="input input-bordered w-full mt-2" />
 
-      <TextAreaInput
-        labelTitle="Enter your Testimony"
-        labelStyle="text-lg"
-        type="text"
-        containerStyle="my-4"
-        defaultValue={TestimonyObj.desc}
-        placeholder="Type your testimony here"
-        updateFormValue={updateFormValue}
-        updateType="desc"
-      />
+      <p style={{ marginTop: 20 }}>Link</p>
+      <input type="text" value={link} onChange={(e) => setLink(e.target.value)} className="input input-bordered w-full mt-2" />
+
+      <p style={{ marginTop: 20 }}>Description</p>
+      <textarea className="textarea textarea-bordered w-full" value={desc}
+        onChange={(e) => setDesc(e.target.value)}>
+      </textarea>
 
       <p style={{ marginTop: 20 }}>Image</p>
       <input
@@ -148,20 +119,27 @@ function AddTestimonyModalBody({ closeModal }) {
         ))}
       </ul>
 
+      <div style={{ width: "32%", margin: 2, }}>
+        <img
+          style={{ width: "100%", height: "100%", border: '1px solid #ccc', cursor: 'pointer' }}
+          src={`${process.env.REACT_APP_BASE_URL}/uploads/gallery/${image}`}
+          alt="Image"
+        />
+      </div>
+
+
+
       <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
       <div className="modal-action">
         <button className="btn btn-ghost" onClick={() => closeModal()}>
           Cancel
         </button>
-        <button
-          className="btn btn-primary px-6"
-          onClick={() => handleCreateTestimony()}
-        >
-          Save
+        <button className="btn btn-primary px-6" onClick={() => updateHandler()}>
+          {loading ? "Loading..." : "Save"}
         </button>
       </div>
     </>
   );
 }
 
-export default AddTestimonyModalBody;
+export default UpdateNewsModalBody;

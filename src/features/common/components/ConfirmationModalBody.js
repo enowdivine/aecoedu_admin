@@ -1,7 +1,7 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { useDispatch, } from "react-redux";
 import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
-  MODAL_CLOSE_TYPES,
 } from "../../../utils/globalConstantUtil";
 import { showNotification } from "../headerSlice";
 import {
@@ -13,35 +13,87 @@ import {
 } from "../../../app/reducers/app";
 
 function ConfirmationModalBody({ extraObject, closeModal }) {
+  const [loading, setLoading] = useState(false)
   const dispatch = useDispatch();
 
-  const { message, type, id } = extraObject;
+  const { message, type, id, item } = extraObject;
 
   const proceedWithYes = async () => {
     if (type === CONFIRMATION_MODAL_CLOSE_TYPES.EVENT_DELETE) {
-      // positive response, call api or dispatch redux function
-      dispatch(deleteEvent({ id }));
-      dispatch(showNotification({ message: "Event Deleted!", status: 1 }));
+      setLoading(true)
+      dispatch(deleteEvent(item._id)).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          dispatch(showNotification({ message: res.payload, status: 0 }));
+          setLoading(false)
+          return
+        }
+        dispatch(showNotification({ message: `${item.title} Deleted!`, status: 1 }));
+        setLoading(false)
+        return
+      }).catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
     } else if (type === CONFIRMATION_MODAL_CLOSE_TYPES.TESTIMONY_DELETE) {
-      // positive response, call api or dispatch redux function
-      dispatch(deleteTestimony({ id }));
-      dispatch(showNotification({ message: "Testimony Deleted!", status: 1 }));
+      setLoading(true)
+      dispatch(deleteTestimony(item._id)).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          dispatch(showNotification({ message: res.payload, status: 0 }));
+          setLoading(false)
+          return
+        }
+        dispatch(showNotification({ message: `${item.name} Deleted!`, status: 1 }));
+        setLoading(false)
+        return
+      }).catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
     } else if (type === CONFIRMATION_MODAL_CLOSE_TYPES.NEWS_DELETE) {
-      // positive response, call api or dispatch redux function
-      dispatch(deleteNews({ id }));
-      dispatch(showNotification({ message: "News Deleted!", status: 1 }));
+      setLoading(true)
+      dispatch(deleteNews(item._id)).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          dispatch(showNotification({ message: res.payload, status: 0 }));
+          setLoading(false)
+          return
+        }
+        dispatch(showNotification({ message: `${item.title} Deleted!`, status: 1 }));
+        setLoading(false)
+        return
+      }).catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
     } else if (type === CONFIRMATION_MODAL_CLOSE_TYPES.HOSTCENTER_DELETE) {
-      // positive response, call api or dispatch redux function
-      dispatch(deleteHostCenter({ id }));
-      dispatch(
-        showNotification({ message: "Host Center Deleted!", status: 1 })
-      );
+      setLoading(true)
+      dispatch(deleteHostCenter(item._id)).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          dispatch(showNotification({ message: res.payload, status: 0 }));
+          setLoading(false)
+          return
+        }
+        dispatch(showNotification({ message: `${item.title} Deleted!`, status: 1 }));
+        setLoading(false)
+        return
+      }).catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
     } else if (type === CONFIRMATION_MODAL_CLOSE_TYPES.PARTNER_DELETE) {
-      // positive response, call api or dispatch redux function
-      dispatch(deletePartner({ id }));
-      dispatch(
-        showNotification({ message: "Partner Deleted!", status: 1 })
-      );
+      setLoading(true)
+      dispatch(deletePartner(item._id)).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          dispatch(showNotification({ message: res.payload, status: 0 }));
+          setLoading(false)
+          return
+        }
+        dispatch(showNotification({ message: `${item.title} Deleted!`, status: 1 }));
+        setLoading(false)
+        return
+      }).catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
     }
     closeModal();
   };

@@ -1,6 +1,5 @@
-import moment from "moment";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import TitleCard from "../../components/Cards/TitleCard";
 import { openModal } from "../common/modalSlice";
 import {
@@ -8,7 +7,7 @@ import {
   MODAL_BODY_TYPES,
 } from "../../utils/globalConstantUtil";
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
-import EyeIcon from "@heroicons/react/24/outline/EyeIcon";
+import PencilSquareIcon from "@heroicons/react/24/outline/PencilSquareIcon";
 import { showNotification } from "../common/headerSlice";
 import SearchBar from "../../components/Input/SearchBar";
 import { getNews } from "../../app/reducers/app";
@@ -44,8 +43,6 @@ function News() {
   const [loading, setLoading] = useState(false);
   const [news, setNews] = useState([]);
 
-  console.log(news);
-
   const handleGetNews = async () => {
     try {
       await dispatch(getNews()).then((res) => {
@@ -72,15 +69,27 @@ function News() {
     handleGetNews();
   }, []);
 
-  const deleteCurrentNews = (id) => {
+  const deleteCurrentNews = (item) => {
     dispatch(
       openModal({
         title: "Confirmation",
         bodyType: MODAL_BODY_TYPES.CONFIRMATION,
         extraObject: {
-          message: `Are you sure you want to delete this News?`,
-          type: CONFIRMATION_MODAL_CLOSE_TYPES.EVENT_NEWS,
-          id,
+          message: `Are you sure you want to delete ${item.title}?`,
+          type: CONFIRMATION_MODAL_CLOSE_TYPES.NEWS_DELETE,
+          item,
+        },
+      })
+    );
+  };
+
+  const updateCurrentItem = (item) => {
+    dispatch(
+      openModal({
+        title: "Update News",
+        bodyType: MODAL_BODY_TYPES.UPDATE_NEWS,
+        extraObject: {
+          item,
         },
       })
     );
@@ -89,7 +98,7 @@ function News() {
   return (
     <>
       <TitleCard
-        title="Current News"
+        title="News"
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
       >
@@ -116,8 +125,18 @@ function News() {
                 news?.map((news) => (
                   <tr key={news._id}>
                     <td>
-                      <div>
-                        <img src={news.image} alt="mews image" />
+                      <div className="flex items-center space-x-3">
+                        <div className="avatar">
+                          <div className="mask mask-circle w-12 h-12">
+                            <img
+                              src={`${process.env.REACT_APP_BASE_URL}/uploads/gallery/${news?.image[0]}`}
+                              alt="Image"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-bold">{news.title}</div>
+                        </div>
                       </div>
                     </td>
                     <td>
@@ -126,15 +145,15 @@ function News() {
                     <td>{news.desc}</td>
                     <td>{news.link}</td>
                     <td>
-                      <Link
-                        to={`/news/show/${news._id}`}
-                        className="btn btn-square btn-ghost"
-                      >
-                        <EyeIcon className="w-5" />
-                      </Link>
                       <button
                         className="btn btn-square btn-ghost"
-                        onClick={() => deleteCurrentNews(news._id)}
+                        onClick={() => updateCurrentItem(news)}
+                      >
+                        <PencilSquareIcon className="w-5" />
+                      </button>
+                      <button
+                        className="btn btn-square btn-ghost"
+                        onClick={() => deleteCurrentNews(news)}
                       >
                         <TrashIcon className="w-5" />
                       </button>

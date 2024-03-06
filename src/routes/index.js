@@ -13,7 +13,6 @@ const Testimony = lazy(() => import('../pages/protected/Testimony'))
 const Events = lazy(() => import('../pages/protected/Events'))
 const Partners = lazy(() => import('../pages/protected/Partners'))
 const News = lazy(() => import('../pages/protected/News'))
-const show = lazy(() => import('../pages/ShowEventModalBody'))
 // const Team = lazy(() => import('../pages/protected/Team'))
 // const Programs = lazy(() => import('../pages/protected/Programs'))
 // const Course = lazy(() => import('../pages/protected/Course'))
@@ -36,26 +35,6 @@ const routes = [
     component: Dashboard, // view rendered
   },
   {
-    path: "/event/show", // the url
-    component: show, // view rendered
-  },
-  // {
-  //   path: '/welcome', // the url
-  //   component: Welcome, // view rendered
-  // },
-  // {
-  //   path: '/rooms',
-  //   component: Rooms,
-  // },
-  {
-    path: "/testimony",
-    component: Testimony,
-  },
-  // {
-  //   path: '/gallery',
-  //   component: Gallery,
-  // },
-  {
     path: "/events",
     component: Events,
   },
@@ -67,14 +46,32 @@ const routes = [
     path: "/news",
     component: News,
   },
-  // {
-  //   path: '/team',
-  //   component: Team,
-  // },
+
   {
     path: "/hostcenters",
     component: HostCenter,
   },
+  {
+    path: "/testimony",
+    component: Testimony,
+  },
+  // {
+  //   path: '/team',
+  //   component: Team,
+  // },
+  // {
+  //   path: '/welcome', // the url
+  //   component: Welcome, // view rendered
+  // },
+  // {
+  //   path: '/rooms',
+  //   component: Rooms,
+  // },
+
+  // {
+  //   path: '/gallery',
+  //   component: Gallery,
+  // },
   // {
   //   path: '/programs',
   //   component: Programs,
@@ -95,10 +92,10 @@ const routes = [
   //   path: '/bookings',
   //   component: Bookings,
   // },
-  {
-    path: "/settings-profile",
-    component: ProfileSettings,
-  },
+  // {
+  //   path: "/settings-profile",
+  //   component: ProfileSettings,
+  // },
   // {
   //   path: '/settings-billing',
   //   component: Bills,
@@ -119,18 +116,18 @@ const routes = [
   //   path: '/integration',
   //   component: Integration,
   // },
-  {
-    path: "/charts",
-    component: Charts,
-  },
-  {
-    path: "/404",
-    component: Page404,
-  },
-  {
-    path: "/blank",
-    component: Blank,
-  },
+  // {
+  //   path: "/charts",
+  //   component: Charts,
+  // },
+  // {
+  //   path: "/404",
+  //   component: Page404,
+  // },
+  // {
+  //   path: "/blank",
+  //   component: Blank,
+  // },
 ];
 
 export default routes

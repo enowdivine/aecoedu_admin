@@ -8,11 +8,10 @@ import {
   MODAL_BODY_TYPES,
 } from "../../utils/globalConstantUtil";
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
-import EyeIcon from "@heroicons/react/24/outline/EyeIcon";
+import PencilSquareIcon from "@heroicons/react/24/outline/PencilSquareIcon";
 import SearchBar from "../../components/Input/SearchBar";
-import { getEvents, getSingleEvent } from "../../app/reducers/app";
+import { getEvents } from "../../app/reducers/app";
 import { showNotification } from "../common/headerSlice";
-import { Link } from "react-router-dom";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -45,8 +44,6 @@ function Events() {
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState([]);
 
-  console.log(events);
-
   const handleGetEvents = async () => {
     try {
       await dispatch(getEvents()).then((res) => {
@@ -73,37 +70,36 @@ function Events() {
     handleGetEvents();
   }, []);
 
-  const deleteCurrentEvent = (id) => {
+  const deleteCurrentEvent = (item) => {
     dispatch(
       openModal({
         title: "Confirmation",
         bodyType: MODAL_BODY_TYPES.CONFIRMATION,
         extraObject: {
-          message: `Are you sure you want to delete this event`,
+          message: `Are you sure you want to delete ${item.title}`,
           type: CONFIRMATION_MODAL_CLOSE_TYPES.EVENT_DELETE,
-          id,
+          item,
         },
       })
     );
   };
 
-  // const openShowNewEventModal = (id) => {
-  //   dispatch(
-  //     openModal({
-  //       title: "Show Event",
-  //       bodyType: MODAL_BODY_TYPES.SHOW_NEW_EVENT,
-  //       extraObject: {
-  //         title: "Show Event",
-  //         index: id,
-  //       },
-  //     })
-  //   );
-  // };
+  const updateCurrentItem = (item) => {
+    dispatch(
+      openModal({
+        title: "Update Event",
+        bodyType: MODAL_BODY_TYPES.UPDATE_EVENT,
+        extraObject: {
+          item,
+        },
+      })
+    );
+  };
 
   return (
     <>
       <TitleCard
-        title="Current Events"
+        title="Events"
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
       >
@@ -118,7 +114,6 @@ function Events() {
                 <th>Event Time</th>
                 <th>Link</th>
                 <th>Location</th>
-                <th>Details</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -142,12 +137,16 @@ function Events() {
                     <td>{event.eventTime}</td>
                     <td>{event.link}</td>
                     <td>{event.location}</td>
-                    <td>{event.details}</td>
                     <td>
-                      <Link to={`/event/show/${event._id}`} className="btn btn-square btn-ghost"><EyeIcon className="w-5" /></Link>
                       <button
                         className="btn btn-square btn-ghost"
-                        onClick={() => deleteCurrentEvent(event._id)}
+                        onClick={() => updateCurrentItem(event)}
+                      >
+                        <PencilSquareIcon className="w-5" />
+                      </button>
+                      <button
+                        className="btn btn-square btn-ghost"
+                        onClick={() => deleteCurrentEvent(event)}
                       >
                         <TrashIcon className="w-5" />
                       </button>

@@ -1,17 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const base_url = `https://aecoedu-59e5eed6446e.herokuapp.com/api/v1`;
+const base_url = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_API_VERSON}`
 
 const initialState = {};
 
 export const getEvents = createAsyncThunk("app/getEvents", async (thunkAPI) => {
   try {
-    const response = await axios.get(`${base_url}/events`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.get(`${base_url}/events`);
     return response.data;
   } catch (error) {
     const message =
@@ -23,32 +19,9 @@ export const getEvents = createAsyncThunk("app/getEvents", async (thunkAPI) => {
   }
 });
 
-export const getSingleEvent = createAsyncThunk(
-  "app/getEvents",
-  async (id, thunkAPI) => {
-    console.log(id);
-    try {
-      const response = await axios.get(`${base_url}/events`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      return response.data;
-    } catch (error) {
-      const message =
-        (error.message && error.response.data && error.response.data.message) ||
-        error.message ||
-        error.toString();
-
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
 export const createEvent = createAsyncThunk(
   "app/createEvent",
   async (data, thunkAPI) => {
-    console.log(data)
     try {
       const response = await axios.post(`${base_url}/events/create`, data, {
         headers: {
@@ -70,7 +43,6 @@ export const createEvent = createAsyncThunk(
 export const updateEvent = createAsyncThunk(
   "app/updateEvent",
   async (data, thunkAPI) => {
-    console.log(data.title)
     try {
       const response = await axios.put(
         `${base_url}/events/update/${data.id}`,
@@ -97,11 +69,8 @@ export const deleteEvent = createAsyncThunk(
   "app/deleteEvent",
   async (id, thunkAPI) => {
     try {
-      console.log(id);
-      const eventId = id;
-      console.log(eventId);
       const response = await axios.delete(
-        `${base_url}/events/delete/${eventId.id}`
+        `${base_url}/events/delete/${id}`
       );
       return response.data;
     } catch (error) {
@@ -119,13 +88,8 @@ export const deleteEvent = createAsyncThunk(
 //
 export const getNews = createAsyncThunk("app/getNews", async (thunkAPI) => {
   try {
-    const response = await axios.get(`${base_url}/news`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.get(`${base_url}/news`);
     return response.data;
-
   } catch (error) {
     const message =
       (error.message && error.response.data && error.response.data.message) ||
@@ -136,30 +100,13 @@ export const getNews = createAsyncThunk("app/getNews", async (thunkAPI) => {
   }
 });
 
-export const getSingleNews = createAsyncThunk(
-  "app/getNews",
-  async (id, thunkAPI) => {
-    try {
-      const response = await axios.get(`${base_url}/news/${id}`);
-      return response.data;
-    } catch (error) {
-      const message =
-        (error.message && error.response.data && error.response.data.message) ||
-        error.message ||
-        error.toString();
-
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
 export const createNews = createAsyncThunk(
   "app/createNews",
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(`${base_url}/news/create`, data, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
       return response.data;
@@ -180,10 +127,10 @@ export const updateNews = createAsyncThunk(
     try {
       const response = await axios.put(
         `${base_url}/news/update/${data.id}`,
-        data,
+        data.formData,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -202,10 +149,10 @@ export const updateNews = createAsyncThunk(
 export const deleteNews = createAsyncThunk(
   "app/deleteEvent",
   async (id, thunkAPI) => {
-    console.log(id);
-    const newsId = id;
     try {
-      const response = await axios.delete(`${base_url}//deletnews/${newsId.id}`);
+      const response = await axios.delete(
+        `${base_url}/news/delete/${id}`
+      );
       return response.data;
     } catch (error) {
       const message =
@@ -237,30 +184,13 @@ export const getPartners = createAsyncThunk(
   }
 );
 
-export const getSinglePartner = createAsyncThunk(
-  "app/getPartner",
-  async (id, thunkAPI) => {
-    try {
-      const response = await axios.get(`${base_url}/partners/${id}`);
-      return response.data;
-    } catch (error) {
-      const message =
-        (error.message && error.response.data && error.response.data.message) ||
-        error.message ||
-        error.toString();
-
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
 export const createPartner = createAsyncThunk(
   "app/createPartners",
   async (data, thunkAPI) => {
     try {
       const response = await axios.post(`${base_url}/partners/create`, data, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
       return response.data;
@@ -281,10 +211,10 @@ export const updatePartner = createAsyncThunk(
     try {
       const response = await axios.put(
         `${base_url}/partners/update/${data.id}`,
-        data,
+        data.formData,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -303,10 +233,10 @@ export const updatePartner = createAsyncThunk(
 export const deletePartner = createAsyncThunk(
   "app/deletePartner",
   async (id, thunkAPI) => {
-    console.log(id);
-    const partnerId = id;
     try {
-      const response = await axios.delete(`${base_url}/partners/delete/${partnerId.id}`);
+      const response = await axios.delete(
+        `${base_url}/partners/delete/${id}`
+      );
       return response.data;
     } catch (error) {
       const message =
@@ -338,30 +268,13 @@ export const getTestimonies = createAsyncThunk(
   }
 );
 
-export const getSingleTestimony = createAsyncThunk(
-  "app/getTestimony",
-  async (id, thunkAPI) => {
-    try {
-      const response = await axios.get(`${base_url}/testimonials/${id}`);
-      return response.data;
-    } catch (error) {
-      const message =
-        (error.message && error.response.data && error.response.data.message) ||
-        error.message ||
-        error.toString();
-
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
 export const createTestimony = createAsyncThunk(
   "app/createTestimony",
   async (data, thunkAPI) => {
     try {
-      const response = await axios.post(`${base_url}/testimony/create`, data, {
+      const response = await axios.post(`${base_url}/testimonials/create`, data, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
       return response.data;
@@ -381,11 +294,11 @@ export const updateTestimony = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await axios.put(
-        `${base_url}/testimony/update/${data.id}`,
-        data,
+        `${base_url}/testimonials/update/${data.id}`,
+        data.formData,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -404,10 +317,10 @@ export const updateTestimony = createAsyncThunk(
 export const deleteTestimony = createAsyncThunk(
   "app/deleteTestimony",
   async (id, thunkAPI) => {
-    console.log(id);
-    const TestimonyId = id;
     try {
-      const response = await axios.delete(`${base_url}/testimony/delete/${TestimonyId.id}`);
+      const response = await axios.delete(
+        `${base_url}/testimonials/delete/${id}`
+      );
       return response.data;
     } catch (error) {
       const message =
@@ -439,23 +352,6 @@ export const getHostCenters = createAsyncThunk(
   }
 );
 
-export const getSingleHostCenter = createAsyncThunk(
-  "app/getHostCenter",
-  async (id, thunkAPI) => {
-    try {
-      const response = await axios.get(`${base_url}/hostcenters/${id}`);
-      return response.data;
-    } catch (error) {
-      const message =
-        (error.message && error.response.data && error.response.data.message) ||
-        error.message ||
-        error.toString();
-
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
 export const createHostCenter = createAsyncThunk(
   "app/createHostCenter",
   async (data, thunkAPI) => {
@@ -465,7 +361,7 @@ export const createHostCenter = createAsyncThunk(
         data,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -487,10 +383,10 @@ export const updateHostCenter = createAsyncThunk(
     try {
       const response = await axios.put(
         `${base_url}/hostcenters/update/${data.id}`,
-        data,
+        data.formData,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -509,12 +405,53 @@ export const updateHostCenter = createAsyncThunk(
 export const deleteHostCenter = createAsyncThunk(
   "app/deleteHostCenter",
   async (id, thunkAPI) => {
-    console.log(id);
-    const hcId = id;
     try {
       const response = await axios.delete(
-        `${base_url}/hostcenters/delete/${hcId.id}`
+        `${base_url}/hostcenters/delete/${id}`
       );
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.message && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+//
+export const updateUserEmail = createAsyncThunk(
+  "app/updateUserEmail",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.put(`${base_url}/auth/update/${data.id}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.message && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const updateUserPassword = createAsyncThunk(
+  "app/updateUserPassword",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.put(`${base_url}/auth/update-password/${data.id}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       return response.data;
     } catch (error) {
       const message =

@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import LandingIntro from "./LandingIntro";
 import ErrorText from "../../components/Typography/ErrorText";
 import InputText from "../../components/Input/InputText";
+import { userLogin } from "../../app/reducers/auth";
+import { useDispatch } from "react-redux";
 
 function Login() {
   const INITIAL_LOGIN_OBJ = {
@@ -10,55 +12,39 @@ function Login() {
     emailId: "",
   };
 
+  const dispatch = useDispatch()
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ);
 
   const submitForm = async (e) => {
-    e.preventDefault();
-    setErrorMessage("");
+    e.preventDefault()
+    setErrorMessage("")
 
-    if (loginObj.emailId.trim() === "")
-      return setErrorMessage("Email Id is required!");
-    if (loginObj.password.trim() === "")
-      return setErrorMessage("Password is required!");
-
-    try {
-      setLoading(true);
-
-      const response = await fetch(
-        "https://aecoedu-59e5eed6446e.herokuapp.com/api/v1/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: loginObj.emailId,
-            password: loginObj.password,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      // Check if login was successful
-      if (response.ok) {
-        // Save token in local storage
-        localStorage.setItem("token", data.token);
-        // Redirect to dashboard or desired route
-        window.location.href = "/app/dashboard";
-      } else {
-        // Display error message returned from the API
-        setErrorMessage(data.message);
+    if (loginObj.emailId.trim() === "") return setErrorMessage("Email Id is required!")
+    if (loginObj.password.trim() === "") return setErrorMessage("Password is required!")
+    else {
+      setLoading(true)
+      setLoading(true)
+      const data = {
+        email: loginObj.emailId,
+        password: loginObj.password
       }
-    } catch (error) {
-      // Handle any network or server errors
-      setErrorMessage("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
+      await dispatch(userLogin(data)).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          setErrorMessage(res.payload)
+          setLoading(false)
+          return
+        }
+        localStorage.setItem("aecoedu_admin", res.payload.token)
+        window.location.href = '/app/dashboard'
+        setLoading(false)
+      }).catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
     }
-  };
+  }
 
   const updateFormValue = ({ updateType, value }) => {
     setErrorMessage("");
@@ -81,7 +67,7 @@ function Login() {
                   defaultValue={loginObj.emailId}
                   updateType="emailId"
                   containerStyle="mt-4"
-                  labelTitle="Email Id"
+                  labelTitle="Email"
                   updateFormValue={updateFormValue}
                 />
 
@@ -95,13 +81,13 @@ function Login() {
                 />
               </div>
 
-              <div className="text-right text-primary">
+              {/* <div className="text-right text-primary">
                 <Link to="/forgot-password">
                   <span className="text-sm  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">
                     Forgot Password?
                   </span>
                 </Link>
-              </div>
+              </div> */}
 
               <ErrorText styleClass="mt-8">{errorMessage}</ErrorText>
               <button
@@ -113,14 +99,14 @@ function Login() {
                 Login
               </button>
 
-              <div className="text-center mt-4">
+              {/* <div className="text-center mt-4">
                 Don't have an account yet?{" "}
                 <Link to="/register">
                   <span className="  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">
                     Register
                   </span>
                 </Link>
-              </div>
+              </div> */}
             </form>
           </div>
         </div>

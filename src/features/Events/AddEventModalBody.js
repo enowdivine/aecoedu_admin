@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import InputText from "../../components/Input/InputText";
 import TextAreaInput from "../../components/Input/TextAreaInput";
 import ErrorText from "../../components/Typography/ErrorText";
 import { showNotification } from "../common/headerSlice";
-import { createEvent, getSingleEvent } from "../../app/reducers/app";
+import { createEvent } from "../../app/reducers/app";
 
 const INITIAL_EVENT_OBJ = {
   title: "",
@@ -33,7 +33,6 @@ function AddEventModalBody({ closeModal }) {
         eventObj.category &&
         eventObj.date
       ) {
-        setLoading(true);
         const newEventObj = {
           title: eventObj.title,
           category: eventObj.category,
@@ -43,30 +42,23 @@ function AddEventModalBody({ closeModal }) {
           location: eventObj.location,
           details: eventObj.details,
         };
+        setLoading(true)
         await dispatch(createEvent(newEventObj)).then((res) => {
           if (res.meta.requestStatus === "rejected") {
-            dispatch(
-              showNotification({
-                message: res.payload,
-                status: 1,
-              })
-            );
-            setLoading(false);
-            return;
-          } else {
-            dispatch(
-              showNotification({
-                message: res.payload.message,
-                status: 1,
-              })
-            );
-            setLoading(false);
-            return;
+            setErrorMessage(res.payload)
+            setLoading(false)
+            return
           }
-        });
+          dispatch(showNotification({ message: "New Event Added!", status: 1 }));
+          setLoading(false)
+          closeModal();
+        }).catch((err) => {
+          console.error(err)
+          setLoading(false)
+        })
       } else {
         dispatch(
-          showNotification({ message: "All field are required!", status: 1 })
+          showNotification({ message: "All field are required!", status: 0 })
         );
         return;
       }
@@ -108,7 +100,7 @@ function AddEventModalBody({ closeModal }) {
         labelTitle="Category"
         updateFormValue={updateFormValue}
       />
-     
+
       <InputText
         type="date"
         defaultValue={eventObj.date}
@@ -127,7 +119,7 @@ function AddEventModalBody({ closeModal }) {
       />
 
       <InputText
-        type="text"
+        type="time"
         defaultValue={eventObj.eventTime}
         updateType="eventTime"
         containerStyle="mt-4"
@@ -141,7 +133,6 @@ function AddEventModalBody({ closeModal }) {
         type="text"
         containerStyle="my-4"
         defaultValue={eventObj.details}
-        placeholder="Type your detail here"
         updateFormValue={updateFormValue}
         updateType="details"
       />

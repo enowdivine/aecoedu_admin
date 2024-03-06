@@ -1,6 +1,5 @@
-import moment from "moment";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import TitleCard from "../../components/Cards/TitleCard";
 import { openModal } from "../common/modalSlice";
 import {
@@ -10,7 +9,7 @@ import {
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
 import { showNotification } from "../common/headerSlice";
 import SearchBar from "../../components/Input/SearchBar";
-import EyeIcon from "@heroicons/react/24/outline/EyeIcon";
+import PencilSquareIcon from "@heroicons/react/24/outline/PencilSquareIcon";
 import { getPartners } from "../../app/reducers/app";
 
 const TopSideButtons = () => {
@@ -45,8 +44,6 @@ function Partner() {
   const [loading, setLoading] = useState(false);
   const [partners, setPartners] = useState([]);
 
-  console.log(partners);
-
   const handleGetPartners = async () => {
     try {
       await dispatch(getPartners()).then((res) => {
@@ -73,15 +70,27 @@ function Partner() {
     handleGetPartners();
   }, []);
 
-  const deleteCurrentPartner = (id) => {
+  const deleteCurrentPartner = (item) => {
     dispatch(
       openModal({
         title: "Confirmation",
         bodyType: MODAL_BODY_TYPES.CONFIRMATION,
         extraObject: {
-          message: `Are you sure you want to delete this partner?`,
+          message: `Are you sure you want to delete ${item.title}?`,
           type: CONFIRMATION_MODAL_CLOSE_TYPES.PARTNER_DELETE,
-          id,
+          item,
+        },
+      })
+    );
+  };
+
+  const updateCurrentItem = (item) => {
+    dispatch(
+      openModal({
+        title: "Update Event",
+        bodyType: MODAL_BODY_TYPES.UPDATE_PARTNER,
+        extraObject: {
+          item,
         },
       })
     );
@@ -90,7 +99,7 @@ function Partner() {
   return (
     <>
       <TitleCard
-        title="Current Partner images"
+        title="Partners"
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
       >
@@ -99,10 +108,8 @@ function Partner() {
           <table className="table w-full">
             <thead>
               <tr>
-                <th>Image</th>
-                <th>Logo</th>
                 <th>Title</th>
-                <th>Description</th>
+                <th>Image</th>
                 <th>Link</th>
                 <th>Action</th>
               </tr>
@@ -118,26 +125,41 @@ function Partner() {
                 partners?.map((partners) => (
                   <tr key={partners._id}>
                     <td>
-                      <img src={partners.image} alt="partner image" />
+                      <div className="flex items-center space-x-3">
+                        <div className="avatar">
+                          <div className="mask mask-circle w-12 h-12">
+                            <img
+                              src={`${process.env.REACT_APP_BASE_URL}/uploads/gallery/${partners?.logo[0]}`}
+                              alt="Image"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-bold">{partners.title}</div>
+                        </div>
+                      </div>
                     </td>
                     <td>
-                      <img src={partners.logo} alt="partner logo" />
+                      <div className="avatar">
+                        <div className="mask mask-circle w-12 h-12">
+                          <img
+                            src={`${process.env.REACT_APP_BASE_URL}/uploads/gallery/${partners?.image[0]}`}
+                            alt="Image"
+                          />
+                        </div>
+                      </div>
                     </td>
-                    <td>
-                      <div className="font-bold">{partners.title}</div>
-                    </td>
-                    <td>{partners.desc}</td>
                     <td>{partners.link}</td>
                     <td>
                       <button
                         className="btn btn-square btn-ghost"
-                        // onClick={() => openShowPartnerModal(partners._id)}
+                        onClick={() => updateCurrentItem(partners)}
                       >
-                        <EyeIcon className="w-5" />
+                        <PencilSquareIcon className="w-5" />
                       </button>
                       <button
                         className="btn btn-square btn-ghost"
-                        onClick={() => deleteCurrentPartner(partners._id)}
+                        onClick={() => deleteCurrentPartner(partners)}
                       >
                         <TrashIcon className="w-5" />
                       </button>

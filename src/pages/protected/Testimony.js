@@ -7,10 +7,10 @@ function InternalPage() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setPageTitle({ title: "Testimony" }));
+    dispatch(setPageTitle({ title: "Testimonials" }));
   }, []);
 
-  return <Testimony/>;
+  return <Testimony />;
 }
 
 export default InternalPage;

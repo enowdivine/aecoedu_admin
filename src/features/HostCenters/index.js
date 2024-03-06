@@ -1,6 +1,5 @@
-import moment from "moment";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import TitleCard from "../../components/Cards/TitleCard";
 import { openModal } from "../common/modalSlice";
 import {
@@ -10,7 +9,7 @@ import {
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
 import { showNotification } from "../common/headerSlice";
 import SearchBar from "../../components/Input/SearchBar";
-import EyeIcon from "@heroicons/react/24/outline/EyeIcon";
+import PencilSquareIcon from "@heroicons/react/24/outline/PencilSquareIcon";
 import { getHostCenters } from "../../app/reducers/app";
 
 const TopSideButtons = () => {
@@ -45,8 +44,6 @@ function HostCenter() {
   const [loading, setLoading] = useState(false);
   const [hostcenters, setHostCenter] = useState([]);
 
-  console.log(hostcenters);
-
   const handleGetHostCenters = async () => {
     try {
       await dispatch(getHostCenters()).then((res) => {
@@ -72,15 +69,28 @@ function HostCenter() {
   useEffect(() => {
     handleGetHostCenters();
   }, []);
-  const deleteCurrentHostCenter = (id) => {
+
+  const updateCurrentItem = (item) => {
+    dispatch(
+      openModal({
+        title: "Update Host Center",
+        bodyType: MODAL_BODY_TYPES.UPDATE_HOST_CENTER,
+        extraObject: {
+          item,
+        },
+      })
+    );
+  };
+
+  const deleteCurrentHostCenter = (item) => {
     dispatch(
       openModal({
         title: "Confirmation",
         bodyType: MODAL_BODY_TYPES.CONFIRMATION,
         extraObject: {
-          message: `Are you sure you want to delete this HostCenter?`,
+          message: `Are you sure you want to delete ${item.title}?`,
           type: CONFIRMATION_MODAL_CLOSE_TYPES.HOSTCENTER_DELETE,
-          id
+          item
         },
       })
     );
@@ -89,7 +99,7 @@ function HostCenter() {
   return (
     <>
       <TitleCard
-        title="Current HostCenter"
+        title="Host Centers"
         topMargin="mt-2"
         TopSideButtons={<TopSideButtons />}
       >
@@ -98,11 +108,10 @@ function HostCenter() {
           <table className="table w-full">
             <thead>
               <tr>
-                <th>Image</th>
                 <th>Logo</th>
-                <th>Title</th>
-                <th>Description</th>
+                <th>Image</th>
                 <th>Link</th>
+                <th>Description</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -117,21 +126,42 @@ function HostCenter() {
                 hostcenters?.map((hostcenter) => (
                   <tr key={hostcenter._id}>
                     <td>
-                      <img src={hostcenter.image} alt="hostcenter image" />
+                      <div className="flex items-center space-x-3">
+                        <div className="avatar">
+                          <div className="mask mask-circle w-12 h-12">
+                            <img
+                              src={`${process.env.REACT_APP_BASE_URL}/uploads/gallery/${hostcenter?.logo[0]}`}
+                              alt="Image"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-bold">{hostcenter.title}</div>
+                        </div>
+                      </div>
                     </td>
                     <td>
-                      <img src={hostcenter.logo} alt="hostcenter logo" />
+                      <div className="avatar">
+                        <div className="mask mask-circle w-12 h-12">
+                          <img
+                            src={`${process.env.REACT_APP_BASE_URL}/uploads/gallery/${hostcenter?.image[0]}`}
+                            alt="Image"
+                          />
+                        </div>
+                      </div>
                     </td>
-                    <td>
-                      <div className="font-bold">{hostcenter.title}</div>
-                    </td>
-                    <td>{hostcenter.desc}</td>
                     <td>{hostcenter.link}</td>
+                    <td>{hostcenter.desc}</td>
                     <td>
-                      <Link to={`/hostcenter/show/${hostcenter._id}`} className="btn btn-square btn-ghost"><EyeIcon className="w-5" /></Link>
                       <button
                         className="btn btn-square btn-ghost"
-                        onClick={() => deleteCurrentHostCenter(hostcenter._id)}
+                        onClick={() => updateCurrentItem(hostcenter)}
+                      >
+                        <PencilSquareIcon className="w-5" />
+                      </button>
+                      <button
+                        className="btn btn-square btn-ghost"
+                        onClick={() => deleteCurrentHostCenter(hostcenter)}
                       >
                         <TrashIcon className="w-5" />
                       </button>

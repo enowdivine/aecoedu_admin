@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import LandingIntro from "./LandingIntro";
 import ErrorText from "../../components/Typography/ErrorText";
 import InputText from "../../components/Input/InputText";
+import { userSignup } from "../../app/reducers/auth";
+import { useDispatch } from "react-redux";
 
 function Register() {
   const INITIAL_REGISTER_OBJ = {
@@ -10,55 +12,39 @@ function Register() {
     emailId: "",
   };
 
+  const dispatch = useDispatch()
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [registerObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
 
   const submitForm = async (e) => {
-    e.preventDefault();
-    setErrorMessage("");
+    e.preventDefault()
+    setErrorMessage("")
 
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (registerObj.emailId.trim() === "")
-      return setErrorMessage("Email Id is required! (use any value)");
-    if (!emailRegex.test(registerObj.emailId.trim()))
-      return setErrorMessage("Invalid email format!");
-
-    if (registerObj.password.trim() === "")
-      return setErrorMessage("Password is required! (use any value)");
-
-    try {
-      setLoading(true);
-      const response = await fetch(
-        "https://aecoedu-59e5eed6446e.herokuapp.com/api/v1/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: registerObj.emailId,
-            password: registerObj.password,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message);
+    // if (registerObj.name.trim() === "") return setErrorMessage("Name is required! (use any value)")
+    if (registerObj.emailId.trim() === "") return setErrorMessage("Email Id is required!")
+    if (registerObj.password.trim() === "") return setErrorMessage("Password is required!")
+    else {
+      setLoading(true)
+      const data = {
+        email: registerObj.emailId,
+        password: registerObj.password
       }
-
-      const data = await response.json();
-      console.log(data);
-      localStorage.setItem("token", data.token);
-      setLoading(false);
-      window.location.href = "/app/dashboard";
-    } catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+      await dispatch(userSignup(data)).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          setErrorMessage(res.payload)
+          setLoading(false)
+          return
+        }
+        localStorage.setItem("aecoedu_admin", res.payload.token)
+        window.location.href = '/app/dashboard'
+        setLoading(false)
+      }).catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
     }
-  };
+  }
 
   const updateFormValue = ({ updateType, value }) => {
     setErrorMessage("");
