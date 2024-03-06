@@ -52,7 +52,7 @@ const routes = [
   {
     path: '/app/testimony', // url
     icon: <InboxArrowDownIcon className={iconClasses} />, // icon component
-    name: 'Testimony', // name that appear in Sidebar
+    name: 'Testimonials', // name that appear in Sidebar
   },
   // {
   //   path: '/app/team', // url
