@@ -9,8 +9,9 @@ import {
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
 import PencilSquareIcon from "@heroicons/react/24/outline/PencilSquareIcon";
 import { showNotification } from "../common/headerSlice";
-import SearchBar from "../../components/Input/SearchBar";
+// import SearchBar from "../../components/Input/SearchBar";
 import { getNews } from "../../app/reducers/app";
+import { FilterFunnction } from "../../components/TableFilter/FilterFunction";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -26,7 +27,9 @@ const TopSideButtons = () => {
 
   return (
     <div className="">
-      <SearchBar />
+      {/* <SearchBar /> */}
+      <input type="text" className="input input-bordered w-50 mt-2" placeholder="Search text"
+        onKeyUp={(e) => FilterFunnction(0, e.target)} />
 
       <button
         className="btn mx-3 px-6 btn-sm normal-case btn-primary"
@@ -104,11 +107,10 @@ function News() {
       >
         {/* room List in table format loaded from slice after api call */}
         <div className="overflow-x-auto w-full">
-          <table className="table w-full">
+          <table className="table w-full" id="dataTable">
             <thead>
               <tr>
-                <th>Image</th>
-                <th>Title</th>
+                <th>Title & Image</th>
                 <th>Description</th>
                 <th>link</th>
                 <th>Action</th>
@@ -138,9 +140,6 @@ function News() {
                           <div className="font-bold">{news.title}</div>
                         </div>
                       </div>
-                    </td>
-                    <td>
-                      <div className="font-bold">{news.title}</div>
                     </td>
                     <td>{news.desc}</td>
                     <td>{news.link}</td>

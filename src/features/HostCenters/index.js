@@ -8,9 +8,10 @@ import {
 } from "../../utils/globalConstantUtil";
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
 import { showNotification } from "../common/headerSlice";
-import SearchBar from "../../components/Input/SearchBar";
+// import SearchBar from "../../components/Input/SearchBar";
 import PencilSquareIcon from "@heroicons/react/24/outline/PencilSquareIcon";
 import { getHostCenters } from "../../app/reducers/app";
+import { FilterFunnction } from "../../components/TableFilter/FilterFunction";
 
 const TopSideButtons = () => {
   const dispatch = useDispatch();
@@ -26,7 +27,9 @@ const TopSideButtons = () => {
 
   return (
     <div className="">
-      <SearchBar />
+      {/* <SearchBar /> */}
+      <input type="text" className="input input-bordered w-50 mt-2" placeholder="Search text"
+        onKeyUp={(e) => FilterFunnction(0, e.target)} />
 
       <button
         className="btn mx-3 px-6 btn-sm normal-case btn-primary"
@@ -105,10 +108,10 @@ function HostCenter() {
       >
         {/* room List in table format loaded from slice after api call */}
         <div className="overflow-x-auto w-full">
-          <table className="table w-full">
+          <table className="table w-full" id="dataTable">
             <thead>
               <tr>
-                <th>Logo</th>
+                <th>Logo & Title</th>
                 <th>Image</th>
                 <th>Link</th>
                 <th>Description</th>
