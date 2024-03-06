@@ -19,9 +19,9 @@ function Login() {
     setErrorMessage("");
 
     if (loginObj.emailId.trim() === "")
-      return setErrorMessage("Email Id is required! (use any value)");
+      return setErrorMessage("Email Id is required!");
     if (loginObj.password.trim() === "")
-      return setErrorMessage("Password is required! (use any value)");
+      return setErrorMessage("Password is required!");
 
     try {
       setLoading(true);

@@ -7,12 +7,12 @@ const initialState = {};
 
 export const getEvents = createAsyncThunk("app/getEvents", async (thunkAPI) => {
   try {
-   const response = await axios.get(`${base_url}/events`, {
-     headers: {
-       "Content-Type": "application/json",
-     },
-   });
-   return response.data;
+    const response = await axios.get(`${base_url}/events`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
   } catch (error) {
     const message =
       (error.message && error.response.data && error.response.data.message) ||
@@ -303,8 +303,8 @@ export const updatePartner = createAsyncThunk(
 export const deletePartner = createAsyncThunk(
   "app/deletePartner",
   async (id, thunkAPI) => {
-     console.log(id);
-     const partnerId = id;
+    console.log(id);
+    const partnerId = id;
     try {
       const response = await axios.delete(`${base_url}/partners/delete/${partnerId.id}`);
       return response.data;
@@ -509,8 +509,8 @@ export const updateHostCenter = createAsyncThunk(
 export const deleteHostCenter = createAsyncThunk(
   "app/deleteHostCenter",
   async (id, thunkAPI) => {
-     console.log(id);
-     const hcId = id;
+    console.log(id);
+    const hcId = id;
     try {
       const response = await axios.delete(
         `${base_url}/hostcenters/delete/${hcId.id}`
@@ -533,6 +533,6 @@ export const authSlice = createSlice({
   reducers: {},
 });
 
-export const {} = authSlice.actions;
+export const { } = authSlice.actions;
 
 export default authSlice.reducer;

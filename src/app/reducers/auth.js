@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const base_url = `https://aecoedu-59e5eed6446e.herokuapp.com/api/v1`;
+const base_url = `${process.env.REACT_APP_BASE_URL}/api/${process.env.REACT_APP_API_VERSON}`;
 
 const initialState = {};
 
@@ -50,6 +50,6 @@ export const authSlice = createSlice({
   reducers: {},
 });
 
-export const {} = authSlice.actions;
+export const { } = authSlice.actions;
 
 export default authSlice.reducer;

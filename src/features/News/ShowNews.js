@@ -67,27 +67,28 @@ function ShowNews() {
           desc: newsObj.desc,
           link: newsObj.link,
         };
-        await dispatch(createNews(newNewsObj)).then((res) => {
-          if (res.meta.requestStatus === "rejected") {
-            dispatch(
-              showNotification({
-                message: res.payload,
-                status: 1,
-              })
-            );
-            setLoading(false);
-            return;
-          } else {
-            dispatch(
-              showNotification({
-                message: res.payload.message,
-                status: 2,
-              })
-            );
-            setLoading(false);
-            return;
-          }
-        });
+        console.log(newNewsObj)
+        // await dispatch(createNews(newNewsObj)).then((res) => {
+        //   if (res.meta.requestStatus === "rejected") {
+        //     dispatch(
+        //       showNotification({
+        //         message: res.payload,
+        //         status: 1,
+        //       })
+        //     );
+        //     setLoading(false);
+        //     return;
+        //   } else {
+        //     dispatch(
+        //       showNotification({
+        //         message: res.payload.message,
+        //         status: 2,
+        //       })
+        //     );
+        //     setLoading(false);
+        //     return;
+        //   }
+        // });
       } else {
         dispatch(
           showNotification({ message: "All field are required!", status: 1 })
@@ -112,23 +113,23 @@ function ShowNews() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
             <InputText
               labelTitle="Title"
-              defaultValue={hostcenterObj.title}
+              // defaultValue={hostcenterObj.title}
               updateFormValue={updateFormValue}
             />
             <ImageUploader
               labelTitle="image"
               updateFormValue={updateFormValue}
-              defaultValue={hostcenterObj.image}
+            // defaultValue={hostcenterObj.image}
             />
             <InputText
               type="url"
               labelTitle="Link"
-              defaultValue={hostcenterObj.link}
+              // defaultValue={hostcenterObj.link}
               updateFormValue={updateFormValue}
             />
             <TextAreaInput
               labelTitle="Details"
-              defaultValue={hostcenterObj.desc}
+              // defaultValue={hostcenterObj.desc}
               updateFormValue={updateFormValue}
             />
           </div>
