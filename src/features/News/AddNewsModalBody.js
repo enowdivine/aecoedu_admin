@@ -10,6 +10,7 @@ const INITIAL_NEWS_OBJ = {
   title: "",
   desc: "",
   link: "",
+  category: ""
 };
 
 function AddNewsModalBody({ closeModal }) {
@@ -25,7 +26,7 @@ function AddNewsModalBody({ closeModal }) {
       if (
         newsObj.title &&
         newsObj.link &&
-        newsObj.desc
+        newsObj.desc && newsObj.category
       ) {
         setLoading(true);
         const formData = new FormData();
@@ -33,6 +34,7 @@ function AddNewsModalBody({ closeModal }) {
         formData.append('title', newsObj.title,);
         formData.append('link', newsObj.link);
         formData.append('desc', newsObj.desc);
+        formData.append('category', newsObj.category);
         await dispatch(createNews(formData)).then((res) => {
           if (res.meta.requestStatus === "rejected") {
             setErrorMessage(res.payload)
@@ -104,6 +106,14 @@ function AddNewsModalBody({ closeModal }) {
         updateType="title"
         containerStyle="mt-4"
         labelTitle="Title"
+        updateFormValue={updateFormValue}
+      />
+      <InputText
+        type="text"
+        defaultValue={newsObj.category}
+        updateType="category"
+        containerStyle="mt-4"
+        labelTitle="Category"
         updateFormValue={updateFormValue}
       />
       <InputText

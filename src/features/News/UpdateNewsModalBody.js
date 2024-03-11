@@ -11,6 +11,7 @@ function UpdateNewsModalBody({ closeModal, extraObject }) {
   const [title, setTitle] = useState("")
   const [link, setLink] = useState("")
   const [desc, setDesc] = useState("")
+  const [category, setCategory] = useState("")
   const [image, setImage] = useState("")
 
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -25,6 +26,7 @@ function UpdateNewsModalBody({ closeModal, extraObject }) {
       formData.append('title', title,);
       formData.append('link', link);
       formData.append('desc', desc);
+      formData.append('category', category);
       const data = { id: item._id, formData }
       await dispatch(updateNews(data)).then((res) => {
         if (res.meta.requestStatus === "rejected") {
@@ -84,6 +86,7 @@ function UpdateNewsModalBody({ closeModal, extraObject }) {
     setTitle(item.title)
     setDesc(item.desc)
     setLink(item.link)
+    setCategory(item.category)
     setImage(item.image)
   }, [item])
 
@@ -92,6 +95,9 @@ function UpdateNewsModalBody({ closeModal, extraObject }) {
     <>
       <p style={{ marginTop: 20 }}>Title</p>
       <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="input input-bordered w-full mt-2" />
+
+      <p style={{ marginTop: 20 }}>Category</p>
+      <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="input input-bordered w-full mt-2" />
 
       <p style={{ marginTop: 20 }}>Link</p>
       <input type="text" value={link} onChange={(e) => setLink(e.target.value)} className="input input-bordered w-full mt-2" />

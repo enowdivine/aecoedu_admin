@@ -11,6 +11,7 @@ const INITIAL_TESTIMONY_OBJ = {
   desc: "",
   school: "",
   rating: "",
+  program: ""
 };
 
 function AddTestimonyModalBody({ closeModal }) {
@@ -28,6 +29,8 @@ function AddTestimonyModalBody({ closeModal }) {
       return setErrorMessage("School is required!")
     else if (TestimonyObj.rating.trim() === "")
       return setErrorMessage("Rating is required!");
+    else if (TestimonyObj.program.trim() === "")
+      return setErrorMessage("Program is required!");
     else if (TestimonyObj.desc.trim() === "")
       return setErrorMessage("Description is required!");
     else {
@@ -38,6 +41,7 @@ function AddTestimonyModalBody({ closeModal }) {
       formData.append('school', TestimonyObj.school);
       formData.append('desc', TestimonyObj.desc);
       formData.append('rating', TestimonyObj.rating);
+      formData.append('program', TestimonyObj.program);
       await dispatch(createTestimony(formData)).then((res) => {
         if (res.meta.requestStatus === "rejected") {
           setErrorMessage(res.payload)
@@ -108,6 +112,14 @@ function AddTestimonyModalBody({ closeModal }) {
         updateType="school"
         containerStyle="mt-4"
         labelTitle="School"
+        updateFormValue={updateFormValue}
+      />
+      <InputText
+        type="text"
+        defaultValue={TestimonyObj.program}
+        updateType="program"
+        containerStyle="mt-4"
+        labelTitle="Program"
         updateFormValue={updateFormValue}
       />
       <InputText

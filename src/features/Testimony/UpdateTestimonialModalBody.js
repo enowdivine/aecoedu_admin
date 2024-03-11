@@ -10,6 +10,7 @@ function UpdateTestimonialModalBody({ closeModal, extraObject }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [name, setName] = useState("")
   const [school, setSchool] = useState("")
+  const [program, setProgram] = useState("")
   const [desc, setDesc] = useState("")
   const [rating, setRating] = useState("")
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -84,6 +85,7 @@ function UpdateTestimonialModalBody({ closeModal, extraObject }) {
     setDesc(item.desc)
     setRating(item.rating)
     setSchool(item.school)
+    setProgram(item.program)
     setImage(item.image)
   }, [item])
 
@@ -95,6 +97,9 @@ function UpdateTestimonialModalBody({ closeModal, extraObject }) {
 
       <p style={{ marginTop: 20 }}>School</p>
       <input type="text" value={school} onChange={(e) => setSchool(e.target.value)} className="input input-bordered w-full mt-2" />
+
+      <p style={{ marginTop: 20 }}>Program</p>
+      <input type="text" value={program} onChange={(e) => setProgram(e.target.value)} className="input input-bordered w-full mt-2" />
 
       <p style={{ marginTop: 20 }}>Rating</p>
       <input type="number" value={rating} onChange={(e) => setRating(e.target.value)} className="input input-bordered w-full mt-2" />
