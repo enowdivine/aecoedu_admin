@@ -17,6 +17,8 @@ import UpdateHostCenterModalBody from "../features/HostCenters/UpdateHostCenterM
 
 import UpdatePasswordModal from "../features/user/UpdatePasswordModal";
 import UpdateEmailModal from "../features/user/UpdateEmailModal";
+import AddArticleModalBody from "../features/Articles/AddArticleModalBody";
+import UpdateArticleModalBody from "../features/Articles/UpdateArticleModalBody";
 
 function ModalLayout() {
   const { isOpen, bodyType, size, extraObject, title } = useSelector(
@@ -58,6 +60,7 @@ function ModalLayout() {
                   extraObject={extraObject}
                 />
               ),
+
               [MODAL_BODY_TYPES.ADD_NEW_EVENT]: (
                 <AddEventModalBody
                   closeModal={close}
@@ -66,6 +69,19 @@ function ModalLayout() {
               ),
               [MODAL_BODY_TYPES.UPDATE_EVENT]: (
                 <UpdateEventModalBody
+                  closeModal={close}
+                  extraObject={extraObject}
+                />
+              ),
+
+              [MODAL_BODY_TYPES.ADD_NEW_ARTICLE]: (
+                <AddArticleModalBody
+                  closeModal={close}
+                  extraObject={extraObject}
+                />
+              ),
+              [MODAL_BODY_TYPES.UPDATE_ARTICLE]: (
+                <UpdateArticleModalBody
                   closeModal={close}
                   extraObject={extraObject}
                 />

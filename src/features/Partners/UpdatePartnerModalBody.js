@@ -38,6 +38,7 @@ function UpdatePartnerModalBody({ closeModal, extraObject }) {
         }
         dispatch(showNotification({ message: "Partner updated!", status: 1 }));
         setLoading(false)
+        window.location.reload()
         closeModal();
       }).catch((err) => {
         console.error(err)

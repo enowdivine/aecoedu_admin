@@ -30,37 +30,37 @@ const routes = [
     name: 'Dashboard',
   },
   {
-    path: '/app/events', // url
-    icon: <CalendarDaysIcon className={iconClasses} />, // icon component
-    name: 'Events', // name that appear in Sidebar
+    path: '/app/events',
+    icon: <CalendarDaysIcon className={iconClasses} />,
+    name: 'Events',
   },
   {
-    path: '/app/partners', // url
-    icon: <UsersIcon className={iconClasses} />, // icon component
-    name: 'Partners', // name that appear in Sidebar
+    path: '/app/partners',
+    icon: <UsersIcon className={iconClasses} />,
+    name: 'Partners',
   },
   {
-    path: '/app/news', // url
-    icon: <NewspaperIcon className={iconClasses} />, // icon component
-    name: 'News', // name that appear in Sidebar
+    path: '/app/news',
+    icon: <NewspaperIcon className={iconClasses} />,
+    name: 'News',
   },
   {
-    path: '/app/hostcenters', // url
-    icon: <HomeIcon className={iconClasses} />, // icon component
-    name: 'HostCenters', // name that appear in Sidebar
+    path: '/app/hostcenters',
+    icon: <HomeIcon className={iconClasses} />,
+    name: 'HostCenters',
   },
   {
-    path: '/app/testimony', // url
-    icon: <InboxArrowDownIcon className={iconClasses} />, // icon component
-    name: 'Testimonials', // name that appear in Sidebar
+    path: '/app/testimony',
+    icon: <InboxArrowDownIcon className={iconClasses} />,
+    name: 'Testimonials',
+  },
+  {
+    path: '/app/articles',
+    icon: <NewspaperIcon className={iconClasses} />,
+    name: 'Articles',
   },
   // {
-  //   path: '/app/team', // url
-  //   icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
-  //   name: 'Team', // name that appear in Sidebar
-  // },
-  // {
-  //   path: '/app/courses', // url
+  //   path: '/app/courses', 
   //   icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
   //   name: 'Courses', // name that appear in Sidebar
   // },

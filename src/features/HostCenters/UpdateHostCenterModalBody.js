@@ -38,6 +38,7 @@ function UpdateHostCenterModalBody({ closeModal, extraObject }) {
         }
         dispatch(showNotification({ message: "Host center updated!", status: 1 }));
         setLoading(false)
+        window.location.reload()
         closeModal();
       }).catch((err) => {
         console.error(err)

@@ -45,6 +45,7 @@ function AddPartnerModalBody({ closeModal }) {
           }
           dispatch(showNotification({ message: "New Partner Added!", status: 1 }));
           setLoading(false)
+          window.location.reload()
           closeModal();
         }).catch((err) => {
           console.error(err)

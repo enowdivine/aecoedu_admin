@@ -36,6 +36,7 @@ function UpdateNewsModalBody({ closeModal, extraObject }) {
         }
         dispatch(showNotification({ message: "News updated!", status: 1 }));
         setLoading(false)
+        window.location.reload()
         closeModal();
       }).catch((err) => {
         console.error(err)

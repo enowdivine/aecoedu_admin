@@ -51,6 +51,7 @@ function AddEventModalBody({ closeModal }) {
           }
           dispatch(showNotification({ message: "New Event Added!", status: 1 }));
           setLoading(false)
+          window.location.reload()
           closeModal();
         }).catch((err) => {
           console.error(err)

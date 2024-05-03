@@ -10,6 +10,7 @@ import {
   deleteNews,
   deletePartner,
   deleteTestimony,
+  deleteArticle
 } from "../../../app/reducers/app";
 
 function ConfirmationModalBody({ extraObject, closeModal }) {
@@ -29,6 +30,7 @@ function ConfirmationModalBody({ extraObject, closeModal }) {
         }
         dispatch(showNotification({ message: `${item.title} Deleted!`, status: 1 }));
         setLoading(false)
+        window.location.reload()
         return
       }).catch((err) => {
         console.error(err)
@@ -44,6 +46,7 @@ function ConfirmationModalBody({ extraObject, closeModal }) {
         }
         dispatch(showNotification({ message: `${item.name} Deleted!`, status: 1 }));
         setLoading(false)
+        window.location.reload()
         return
       }).catch((err) => {
         console.error(err)
@@ -59,6 +62,7 @@ function ConfirmationModalBody({ extraObject, closeModal }) {
         }
         dispatch(showNotification({ message: `${item.title} Deleted!`, status: 1 }));
         setLoading(false)
+        window.location.reload()
         return
       }).catch((err) => {
         console.error(err)
@@ -74,6 +78,7 @@ function ConfirmationModalBody({ extraObject, closeModal }) {
         }
         dispatch(showNotification({ message: `${item.title} Deleted!`, status: 1 }));
         setLoading(false)
+        window.location.reload()
         return
       }).catch((err) => {
         console.error(err)
@@ -89,6 +94,23 @@ function ConfirmationModalBody({ extraObject, closeModal }) {
         }
         dispatch(showNotification({ message: `${item.title} Deleted!`, status: 1 }));
         setLoading(false)
+        window.location.reload()
+        return
+      }).catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
+    } else if (type === CONFIRMATION_MODAL_CLOSE_TYPES.ARTICLE_DELETE) {
+      setLoading(true)
+      dispatch(deleteArticle(item._id)).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          dispatch(showNotification({ message: res.payload, status: 0 }));
+          setLoading(false)
+          return
+        }
+        dispatch(showNotification({ message: `${item.title} Deleted!`, status: 1 }));
+        setLoading(false)
+        window.location.reload()
         return
       }).catch((err) => {
         console.error(err)

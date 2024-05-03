@@ -463,6 +463,101 @@ export const updateUserPassword = createAsyncThunk(
     }
   }
 );
+//
+// article api funtions
+//
+export const getArticles = createAsyncThunk("app/getArticles", async (thunkAPI) => {
+  try {
+    const response = await axios.get(`${base_url}/articles`);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.message && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+export const getSingleArticle = createAsyncThunk("app/getSingleArticle", async (id, thunkAPI) => {
+  try {
+    const response = await axios.get(`${base_url}/articles/${id}`);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.message && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+export const createArticle = createAsyncThunk(
+  "app/createArticle",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.post(`${base_url}/articles/create`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.message && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const updateArticle = createAsyncThunk(
+  "app/updateArticle",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.put(
+        `${base_url}/articles/update/${data.id}`,
+        data.formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.message && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const deleteArticle = createAsyncThunk(
+  "app/deleteArticle",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.delete(
+        `${base_url}/articles/delete/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.message && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 export const authSlice = createSlice({
   name: "app",
