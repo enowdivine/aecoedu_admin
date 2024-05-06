@@ -559,6 +559,62 @@ export const deleteArticle = createAsyncThunk(
   }
 );
 
+export const getComments = createAsyncThunk("app/getComments", async (id, thunkAPI) => {
+  try {
+    const response = await axios.get(`${base_url}/article-comments/read-by-article/${id}`);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.message && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+export const createComment = createAsyncThunk(
+  "app/createComment",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.post(`${base_url}/article-comments/create`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.message && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const createCommentsReplies = createAsyncThunk(
+  "app/createCommentsReplies",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.put(`${base_url}/article-comments/update/${data.id}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.message && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: "app",
   initialState,
