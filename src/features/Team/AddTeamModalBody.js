@@ -2,16 +2,16 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import InputText from "../../components/Input/InputText";
 import TextAreaInput from "../../components/Input/TextAreaInput";
-import SelectBox from "../../components/Input/SelectBox";
 import ErrorText from "../../components/Typography/ErrorText";
 import { showNotification } from "../common/headerSlice";
-import { addNewTeam, deleteTeam } from "./teamSlice";
-import ImageUploader from "../../components/Input/ImageUploader";
+import { createTeamMember } from "../../app/reducers/app";
 
 const INITIAL_TEAM_OBJ = {
   name: "",
   image: "",
-  position: "",
+  profession: "",
+  details: "",
+  link: ""
 };
 
 function AddTeamModalBody({ closeModal }) {
@@ -19,27 +19,43 @@ function AddTeamModalBody({ closeModal }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [teamObj, setteamObj] = useState(INITIAL_TEAM_OBJ);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
-  const saveNewTeam = () => {
+  const saveNewTeam = async () => {
     if (teamObj.name.trim() === "")
       return setErrorMessage("name is required!");
-    else if (teamObj.position.trim() === "")
-      return setErrorMessage("position is required!");
+    else if (teamObj.profession.trim() === "")
+      return setErrorMessage("profession is required!");
     else {
-      let newteamObj = {
-        id: 7,
-        name: teamObj.name,
-        image: teamObj.image,
-        position: teamObj.position,
-      };
-      dispatch(addNewTeam({ teamObj }));
-      dispatch(
-        showNotification({
-          message: "Team succesfully Added!",
-          status: 1,
-        })
-      );
-      closeModal();
+      setLoading(true)
+      const formData = new FormData();
+      formData.append('image', selectedFiles[0]);
+      formData.append('name', teamObj.name);
+      formData.append('profession', teamObj.profession);
+      formData.append('details', teamObj.details);
+      formData.append('link', teamObj.link);
+      await dispatch(createTeamMember(formData)).then((res) => {
+        if (res.meta.requestStatus === "rejected") {
+          setErrorMessage(res.payload)
+          setLoading(false)
+          return
+        }
+        dispatch(showNotification({ message: "New member Added!", status: 1 }));
+        setLoading(false)
+        closeModal();
+        window.location.reload()
+      }).catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
+    }
+  };
+
+  const handleFileChange = (event) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const newSelectedFiles = [...selectedFiles, ...files];
+      setSelectedFiles(newSelectedFiles)
     }
   };
 
@@ -47,11 +63,7 @@ function AddTeamModalBody({ closeModal }) {
     setErrorMessage("");
     setteamObj({ ...teamObj, [updateType]: value });
   };
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const handleImageUpload = (value) => {
-    console.log(value);
-    // handle the uploaded image here
-  };
+
   return (
     <>
       <InputText
@@ -65,18 +77,38 @@ function AddTeamModalBody({ closeModal }) {
       <InputText
         type="text"
         defaultValue={teamObj.position}
-        updateType="position"
+        updateType="profession"
         containerStyle="mt-4"
         labelTitle="Position"
         updateFormValue={updateFormValue}
       />
-      <ImageUploader
-        labelTitle="Upload an image"
-        containerStyle="my-4"
-        defaultValue={teamObj.image}
-        updateFormValue={handleImageUpload}
-        updateType="image"
+
+      <InputText
+        type="text"
+        defaultValue={teamObj.link}
+        updateType="link"
+        containerStyle="mt-4"
+        labelTitle="Profile Lnk"
+        updateFormValue={updateFormValue}
       />
+
+      <TextAreaInput
+        labelTitle="Enter more details about member"
+        labelStyle="text-lg"
+        type="text"
+        containerStyle="my-4"
+        defaultValue={teamObj.details}
+        placeholder="Type your details here"
+        updateFormValue={updateFormValue}
+        updateType="details"
+      />
+
+      <p style={{ marginTop: 20 }}>Image</p>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange} className="input  input-bordered w-full mt-2" />
+
       <ErrorText styleClass="mt-16">{errorMessage}</ErrorText>
       <div className="modal-action">
         <button className="btn btn-ghost" onClick={() => closeModal()}>

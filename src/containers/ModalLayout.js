@@ -19,6 +19,10 @@ import UpdatePasswordModal from "../features/user/UpdatePasswordModal";
 import UpdateEmailModal from "../features/user/UpdateEmailModal";
 import AddArticleModalBody from "../features/Articles/AddArticleModalBody";
 import UpdateArticleModalBody from "../features/Articles/UpdateArticleModalBody";
+import AddJobModalBody from "../features/Jobs/AddJobModalBody";
+import UpdateJobModalBody from "../features/Jobs/UpdateJobModalBody";
+import AddTeamModalBody from "../features/Team/AddTeamModalBody";
+import UpdateTeamModalBody from "../features/Team/UpdateTeamModalBody";
 
 function ModalLayout() {
   const { isOpen, bodyType, size, extraObject, title } = useSelector(
@@ -136,6 +140,32 @@ function ModalLayout() {
               ),
               [MODAL_BODY_TYPES.UPDATE_USER_EMAIL]: (
                 <UpdateEmailModal
+                  closeModal={close}
+                  extraObject={extraObject}
+                />
+              ),
+
+              [MODAL_BODY_TYPES.ADD_NEW_JOB]: (
+                <AddJobModalBody
+                  closeModal={close}
+                  extraObject={extraObject}
+                />
+              ),
+              [MODAL_BODY_TYPES.UPDATE_JOB]: (
+                <UpdateJobModalBody
+                  closeModal={close}
+                  extraObject={extraObject}
+                />
+              ),
+
+              [MODAL_BODY_TYPES.ADD_NEW_TEAM]: (
+                <AddTeamModalBody
+                  closeModal={close}
+                  extraObject={extraObject}
+                />
+              ),
+              [MODAL_BODY_TYPES.UPDATE_TEAM]: (
+                <UpdateTeamModalBody
                   closeModal={close}
                   extraObject={extraObject}
                 />

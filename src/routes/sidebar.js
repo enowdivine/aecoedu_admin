@@ -11,9 +11,8 @@ import CalendarDaysIcon from '@heroicons/react/24/outline/CalendarDaysIcon'
 // import ArrowRightOnRectangleIcon from '@heroicons/react/24/outline/ArrowRightOnRectangleIcon'
 // import UserIcon from '@heroicons/react/24/outline/UserIcon'
 // import Cog6ToothIcon from '@heroicons/react/24/outline/Cog6ToothIcon'
-// import BoltIcon from '@heroicons/react/24/outline/BoltIcon'
 // import ChartBarIcon from '@heroicons/react/24/outline/ChartBarIcon'
-// import CurrencyDollarIcon from '@heroicons/react/24/outline/CurrencyDollarIcon'
+import UserGroupIcon from '@heroicons/react/24/outline/UserGroupIcon'
 import InboxArrowDownIcon from '@heroicons/react/24/outline/InboxArrowDownIcon'
 import UsersIcon from '@heroicons/react/24/outline/UsersIcon'
 import HomeIcon from '@heroicons/react/24/outline/HomeIcon'
@@ -59,17 +58,17 @@ const routes = [
     icon: <NewspaperIcon className={iconClasses} />,
     name: 'Articles',
   },
-  // {
-  //   path: '/app/courses', 
-  //   icon: <CurrencyDollarIcon className={iconClasses}/>, // icon component
-  //   name: 'Courses', // name that appear in Sidebar
-  // },
+  {
+    path: '/app/team',
+    icon: <UserGroupIcon className={iconClasses} />,
+    name: 'Team',
+  },
 
-  // {
-  //   path: '/app/rooms', // url
-  //   icon: <InboxArrowDownIcon className={iconClasses}/>, // icon component
-  //   name: 'Rooms', // name that appear in Sidebar
-  // },
+  {
+    path: '/app/jobs', // url
+    icon: <InboxArrowDownIcon className={iconClasses} />,
+    name: 'Jobs',
+  },
   // {
   //   path: '/app/gallery', // url
   //   icon: <InboxArrowDownIcon className={iconClasses}/>, // icon component
