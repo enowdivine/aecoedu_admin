@@ -28,8 +28,12 @@ const TopSideButtons = () => {
   return (
     <div className="">
       {/* <SearchBar /> */}
-      <input type="text" className="input input-bordered w-50 mt-2" placeholder="Search text"
-        onKeyUp={(e) => FilterFunnction(0, e.target)} />
+      <input
+        type="text"
+        className="input input-bordered w-50 mt-2"
+        placeholder="Search text"
+        onKeyUp={(e) => FilterFunnction(0, e.target)}
+      />
 
       <button
         className="btn mx-3 px-6 btn-sm normal-case btn-primary"
@@ -110,9 +114,8 @@ function News() {
           <table className="table w-full" id="dataTable">
             <thead>
               <tr>
-                <th>Title & Image</th>
-                <th>Description</th>
-                <th>link</th>
+                <th>Image</th>
+                <th>Title</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -131,18 +134,18 @@ function News() {
                         <div className="avatar">
                           <div className="mask mask-circle w-12 h-12">
                             <img
-                              src={`${process.env.REACT_APP_BASE_URL}/uploads/gallery/${news?.image[0]}`}
-                              alt="Image"
+                              src={`${process.env.REACT_APP_BASE_URL}${news.image}`}
+                              alt={news.title}
                             />
                           </div>
                         </div>
-                        <div>
-                          <div className="font-bold">{news.title}</div>
-                        </div>
                       </div>
                     </td>
-                    <td>{news.desc}</td>
-                    <td>{news.link}</td>
+                    <td>
+                      <div>
+                        <div className="font-bold">{news.title}</div>
+                      </div>
+                    </td>
                     <td>
                       <button
                         className="btn btn-square btn-ghost"
